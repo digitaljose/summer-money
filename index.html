@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Summer Money - Family Allowance & Chores</title>
+    <title>Summer Money - Family Chores & Allowance</title>
     <style>
         * {
             margin: 0;
@@ -133,10 +133,14 @@
         }
 
         h3 {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: 800;
             color: #1f2937;
-            margin: 1.5rem 0 1rem 0;
+            margin: 1.5rem 0 0.75rem 0;
+            padding: 0.75rem 1rem;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border-radius: 0.75rem;
+            border-left: 4px solid #10b981;
         }
 
         .card {
@@ -159,12 +163,6 @@
             background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
             border: none;
             color: #065f46;
-        }
-
-        .card.gradient-purple {
-            background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
-            border: none;
-            color: #5b21b6;
         }
 
         .kid-card {
@@ -417,6 +415,56 @@
             color: #1f2937;
         }
 
+        .add-section {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border: 2px solid #10b981;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .add-section h4 {
+            color: #065f46;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .task-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .task-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .task-card:hover {
+            border-color: #10b981;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .task-card-name {
+            font-weight: 800;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            color: #1f2937;
+        }
+
+        .task-card-pay {
+            font-weight: 900;
+            color: #10b981;
+            font-size: 1.25rem;
+        }
+
         button {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
@@ -484,7 +532,7 @@
             max-width: 700px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 0.25rem;
             padding: 0.75rem;
         }
@@ -519,23 +567,6 @@
 
         .nav-emoji {
             font-size: 1.5rem;
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 0.875rem;
-            border: 2px solid #d1d5db;
-            border-radius: 0.75rem;
-            font-family: inherit;
-            margin-bottom: 0.875rem;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: #10b981;
-            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
         }
 
         .pin-modal {
@@ -706,6 +737,7 @@
             body { padding-bottom: 140px; }
             h2 { font-size: 1.75rem; }
             .header-content { flex-direction: column; gap: 0.75rem; }
+            .navbar-content { grid-template-columns: repeat(4, 1fr); }
         }
     </style>
 </head>
@@ -757,22 +789,22 @@
             <div id="dashboard-content"></div>
         </div>
 
+        <!-- Tasks (with Add More) -->
+        <div id="tab-tasks" class="tab-content">
+            <h2>Tasks</h2>
+            <div id="tasks-content"></div>
+        </div>
+
         <!-- Kids Profiles -->
         <div id="tab-kids" class="tab-content">
             <h2>Kids</h2>
             <div id="kids-content"></div>
         </div>
 
-        <!-- Tasks -->
-        <div id="tab-tasks" class="tab-content">
-            <h2>Tasks</h2>
-            <div id="tasks-content"></div>
-        </div>
-
-        <!-- Ideas -->
-        <div id="tab-ideas" class="tab-content">
-            <h2>Ideas</h2>
-            <div id="ideas-content"></div>
+        <!-- Leaderboard -->
+        <div id="tab-records" class="tab-content">
+            <h2>Leaderboard</h2>
+            <div id="records-content"></div>
         </div>
 
         <!-- Parent Review -->
@@ -786,12 +818,6 @@
             <h2>Payout</h2>
             <div id="payout-content"></div>
         </div>
-
-        <!-- Leaderboard -->
-        <div id="tab-records" class="tab-content">
-            <h2>Leaderboard</h2>
-            <div id="records-content"></div>
-        </div>
     </div>
 
     <!-- Navigation -->
@@ -801,17 +827,13 @@
                 <span class="nav-emoji">📊</span>
                 <span>Home</span>
             </button>
-            <button class="nav-btn" onclick="switchTab('kids')">
-                <span class="nav-emoji">👥</span>
-                <span>Kids</span>
-            </button>
             <button class="nav-btn" onclick="switchTab('tasks')">
                 <span class="nav-emoji">✓</span>
                 <span>Tasks</span>
             </button>
-            <button class="nav-btn" onclick="switchTab('ideas')">
-                <span class="nav-emoji">💡</span>
-                <span>Ideas</span>
+            <button class="nav-btn" onclick="switchTab('kids')">
+                <span class="nav-emoji">👥</span>
+                <span>Kids</span>
             </button>
             <button class="nav-btn" onclick="switchTab('records')">
                 <span class="nav-emoji">🏆</span>
@@ -821,15 +843,13 @@
     </div>
 
     <script>
-        // ===== STATE MANAGEMENT =====
+        const kids = ['olli', 'jackson', 'kennedy', 'grayson'];
+        const kidEmojis = { olli: '⚽', jackson: '🏃', kennedy: '💪', grayson: '🧘' };
+
         let currentKid = 'olli';
         let parentMode = false;
         let parentPin = '1234';
         let enteredPin = '';
-
-        const kids = ['olli', 'jackson', 'kennedy', 'grayson'];
-        const kidEmojis = { olli: '⚽', jackson: '🏃', kennedy: '💪', grayson: '🧘' };
-        const kidColors = { olli: '#3b82f6', jackson: '#f59e0b', kennedy: '#ec4899', grayson: '#06b6d4' };
 
         let data = JSON.parse(localStorage.getItem('summerMoneyData')) || initializeData();
 
@@ -846,31 +866,155 @@
             };
         }
 
-        // ===== TASK DEFINITIONS =====
-        const taskTemplates = {
-            house: [
-                { name: 'Take out trash', category: '🏠 House', pay: 2, requirement: 'Trash bins to curb', time: '10 min' },
-                { name: 'Take recycling out', category: '🏠 House', pay: 2, requirement: 'Recycling bin to curb', time: '10 min' },
-                { name: 'Wipe bathroom counter', category: '🚿 Bathroom', pay: 2, requirement: 'Counter and sink clean', time: '10 min' },
-                { name: 'Sweep kitchen', category: '🧹 Cleaning', pay: 2, requirement: 'Entire floor', time: '15 min' },
-                { name: 'Vacuum one room', category: '🧹 Cleaning', pay: 3, requirement: 'Room completely vacuumed', time: '20 min' },
-                { name: 'Fold laundry', category: '🧺 Laundry', pay: 1, requirement: 'All items folded', time: '20 min' },
-                { name: 'Empty dishwasher', category: '🏠 House', pay: 2, requirement: 'All dishes away', time: '10 min' },
-                { name: 'Poop duty', category: '🐶 Poop Duty', pay: 2, requirement: 'All areas checked', time: '15 min' },
-                { name: 'Clean bedroom', category: '🛏 Bedroom', pay: 5, requirement: 'Full checklist complete', time: '45 min', checklist: ['Floor picked up', 'Bed made', 'Laundry put away', 'Vacuum completed'] },
-                { name: 'Clean bathroom', category: '🚿 Bathroom', pay: 5, requirement: 'Full checklist complete', time: '45 min', checklist: ['Sink wiped', 'Counter cleaned', 'Mirror cleaned', 'Toilet cleaned', 'Trash emptied', 'Floor swept'] }
+        // ===== COMPREHENSIVE TASK DATABASE =====
+        const allTasks = {
+            'Daily Quick Jobs': [
+                { name: 'Empty small trash cans', pay: 1, req: 'Around house', athletic: false },
+                { name: 'Replace trash bags', pay: 1, req: 'Bathrooms/bedrooms', athletic: false },
+                { name: 'Wipe kitchen table after meals', pay: 1, req: 'After each meal', athletic: false },
+                { name: 'Wipe kitchen counters', pay: 1, req: 'Clean and dry', athletic: false },
+                { name: 'Load dishwasher', pay: 1, req: 'All dishes loaded', athletic: false },
+                { name: 'Unload dishwasher', pay: 1, req: 'All away', athletic: false },
+                { name: 'Match socks', pay: 1, req: 'Fold and organize', athletic: false },
+                { name: 'Put shoes away by entryway', pay: 1, req: 'Organized', athletic: false },
+                { name: 'Reset couch pillows/blankets', pay: 1, req: 'Neat', athletic: false },
+                { name: 'Sweep mudroom/entryway', pay: 1, req: 'Clean floor', athletic: false },
+                { name: 'Bring garbage/recycling back from curb', pay: 1, req: 'Bins returned', athletic: false }
             ],
-            athletic: [
-                { name: 'Juggling (15 min)', category: '⚽ Ball Skills', pay: 2, requirement: '15 min focused', time: '15 min', isAthletic: true },
-                { name: 'Pushups (3×10)', category: '💪 Strength', pay: 2, requirement: '3 sets of 10', time: '15 min', isAthletic: true },
-                { name: 'Stretching (10 min)', category: '💪 Strength', pay: 2, requirement: 'Full body stretch', time: '10 min', isAthletic: true },
-                { name: 'Wall passes (100 touches)', category: '⚽ Ball Skills', pay: 2, requirement: '100 touches', time: '15 min', isAthletic: true },
-                { name: '2 loops run', category: '🏃 Fitness', pay: 4, requirement: 'Around pond 2x', time: '20 min', isAthletic: true },
-                { name: '1 mile easy run', category: '🏃 Fitness', pay: 5, requirement: '1 mile easy', time: '15 min', isAthletic: true },
-                { name: 'Sprint workout', category: '🏃 Fitness', pay: 5, requirement: '8-10 short sprints', time: '20 min', isAthletic: true },
-                { name: 'Fitness circuit (20 min)', category: '🏃 Fitness', pay: 5, requirement: '20 min mixed', time: '20 min', isAthletic: true },
-                { name: 'Full workout (45 min)', category: '🏃 Fitness', pay: 10, requirement: 'Comprehensive session', time: '45 min', isAthletic: true },
-                { name: 'Ball control (45 min)', category: '⚽ Ball Skills', pay: 10, requirement: 'Juggling, dribbling, passing', time: '45 min', isAthletic: true }
+            'Kitchen Jobs': [
+                { name: 'Wipe cabinet fronts', pay: 2, req: 'Clean and shiny', athletic: false },
+                { name: 'Clean microwave inside', pay: 2, req: 'Spotless', athletic: false },
+                { name: 'Clean pantry floor', pay: 2, req: 'Swept and mopped', athletic: false },
+                { name: 'Organize one pantry shelf', pay: 2, req: 'Neatly arranged', athletic: false },
+                { name: 'Wipe fridge handles/front', pay: 1, req: 'Clean', athletic: false },
+                { name: 'Clean out old snacks from pantry', pay: 2, req: 'Expired items removed', athletic: false },
+                { name: 'Sweep + vacuum kitchen area', pay: 2, req: 'Floor clean', athletic: false },
+                { name: 'Help prep simple dinner ingredients', pay: 3, req: 'Ready to cook', athletic: false },
+                { name: 'Pack/unpack lunch supplies area', pay: 2, req: 'Organized', athletic: false },
+                { name: 'Deep clean kitchen table/chairs', pay: 3, req: 'Spotless', athletic: false }
+            ],
+            'Laundry Jobs': [
+                { name: 'Move laundry washer to dryer', pay: 1, req: 'Transferred', athletic: false },
+                { name: 'Fold one basket of laundry', pay: 2, req: 'All folded', athletic: false },
+                { name: 'Put away shared towels', pay: 1, req: 'In closets', athletic: false },
+                { name: 'Sort laundry by person', pay: 1, req: 'Organized', athletic: false },
+                { name: 'Match socks from full load', pay: 1, req: 'Paired', athletic: false },
+                { name: 'Strip bed sheets', pay: 1, req: 'All off', athletic: false },
+                { name: 'Help remake bed with clean sheets', pay: 2, req: 'Bed made', athletic: false },
+                { name: 'Full bedding reset', pay: 4, req: 'Sheets, blanket, pillows fresh', athletic: false }
+            ],
+            'Bedroom Jobs': [
+                { name: 'Basic bedroom reset', pay: 2, req: 'Floor clear, bed made', athletic: false },
+                { name: 'Full bedroom clean checklist', pay: 3, req: 'All items completed', athletic: false, checklist: ['Floor picked up', 'Bed made', 'Laundry put away', 'Surfaces dusted', 'Vacuumed'] },
+                { name: 'Deep bedroom clean', pay: 5, req: 'Thorough cleaning', athletic: false },
+                { name: 'Organize dresser drawers', pay: 3, req: 'All folded neatly', athletic: false },
+                { name: 'Organize closet floor', pay: 3, req: 'Items organized', athletic: false },
+                { name: 'Dust furniture/wood surfaces', pay: 2, req: 'Dust removed', athletic: false },
+                { name: 'Vacuum bedroom', pay: 2, req: 'Complete vacuum', athletic: false },
+                { name: 'Clean under bed', pay: 3, req: 'Cleaned out', athletic: false },
+                { name: 'Declutter desk/nightstand', pay: 2, req: 'Organized', athletic: false },
+                { name: 'Bag clothes that no longer fit', pay: 4, req: 'Bagged for donation', athletic: false }
+            ],
+            'Bathroom Jobs': [
+                { name: 'Wipe bathroom counter/sink', pay: 1, req: 'Clean and dry', athletic: false },
+                { name: 'Clean mirror', pay: 1, req: 'Spotless', athletic: false },
+                { name: 'Empty bathroom trash', pay: 1, req: 'Emptied', athletic: false },
+                { name: 'Full bathroom clean', pay: 3, req: 'All items done', athletic: false, checklist: ['Sink wiped', 'Counter cleaned', 'Mirror cleaned', 'Toilet cleaned', 'Trash emptied', 'Floor swept'] },
+                { name: 'Deep bathroom clean', pay: 5, req: 'Thorough', athletic: false },
+                { name: 'Organize bathroom drawer/cabinet', pay: 2, req: 'Organized', athletic: false },
+                { name: 'Restock toilet paper/towels', pay: 1, req: 'Restocked', athletic: false },
+                { name: 'Sweep/vacuum bathroom floor', pay: 1, req: 'Clean floor', athletic: false },
+                { name: 'Wipe baseboards in bathroom', pay: 2, req: 'Clean baseboards', athletic: false }
+            ],
+            'Dog Jobs': [
+                { name: 'Refill dog water', pay: 1, req: 'Full bowl', athletic: false },
+                { name: 'Feed dog', pay: 1, req: 'Food served', athletic: false },
+                { name: 'Brush dog', pay: 2, req: 'Fur brushed', athletic: false },
+                { name: 'Pick up dog toys around house', pay: 1, req: 'All toys collected', athletic: false },
+                { name: 'Clean dog bowls', pay: 1, req: 'Washed clean', athletic: false },
+                { name: 'Wipe dog feeding area', pay: 1, req: 'Clean floor', athletic: false },
+                { name: 'Poop duty around yard', pay: 1, req: 'All cleaned', athletic: false },
+                { name: 'Walk dog with parent permission', pay: 2, req: 'Walk completed', athletic: false },
+                { name: 'Long dog walk', pay: 3, req: 'Extended walk', athletic: false },
+                { name: 'Vacuum dog hair in one room', pay: 2, req: 'Hair removed', athletic: false },
+                { name: 'Clean dog bed area', pay: 3, req: 'Area cleaned', athletic: false },
+                { name: 'Help bathe dog', pay: 4, req: 'Dog bathed and dried', athletic: false }
+            ],
+            'Large Home Reset': [
+                { name: 'Reset living room', pay: 1, req: 'Organized', athletic: false },
+                { name: 'Reset basement/family room', pay: 3, req: 'Picked up', athletic: false },
+                { name: 'Reset playroom/game room', pay: 3, req: 'Toys organized', athletic: false },
+                { name: 'Vacuum one level', pay: 4, req: 'Complete level', athletic: false },
+                { name: 'Vacuum stairs', pay: 2, req: 'All stairs', athletic: false },
+                { name: 'Dust one room', pay: 1, req: 'Dust removed', athletic: false },
+                { name: 'Dust one full level', pay: 4, req: 'Complete level', athletic: false },
+                { name: 'Wipe baseboards in one room', pay: 2, req: 'Baseboards clean', athletic: false },
+                { name: 'Clean window sills in one room', pay: 2, req: 'Sills clean', athletic: false },
+                { name: 'Organize entryway/mudroom', pay: 3, req: 'Organized', athletic: false },
+                { name: 'Clean under couch cushions', pay: 2, req: 'Cleaned out', athletic: false },
+                { name: 'Straighten blankets/pillows in shared spaces', pay: 2, req: 'All neat', athletic: false },
+                { name: 'Full main-floor reset', pay: 5, req: 'Complete reset', athletic: false }
+            ],
+            'Yard/Outside Jobs': [
+                { name: 'Pick up sticks in yard', pay: 2, req: 'All sticks removed', athletic: false },
+                { name: 'Pull weeds for 20 minutes', pay: 3, req: '20 min focused', athletic: false },
+                { name: 'Water plants/flowers', pay: 1, req: 'All watered', athletic: false },
+                { name: 'Sweep porch', pay: 1, req: 'Clean porch', athletic: false },
+                { name: 'Sweep deck/patio', pay: 1, req: 'Clean deck', athletic: false },
+                { name: 'Organize outdoor toys/sports gear', pay: 2, req: 'Organized', athletic: false },
+                { name: 'Clean patio table/chairs', pay: 3, req: 'Spotless', athletic: false },
+                { name: 'Rake small area', pay: 3, req: 'Area raked', athletic: false },
+                { name: 'Bag leaves/yard waste with help', pay: 4, req: 'Bagged', athletic: false },
+                { name: 'Help spread rock', pay: 6, req: 'Completed', athletic: false },
+                { name: 'Pull weeds from driveway cracks', pay: 3, req: 'Weeds gone', athletic: false }
+            ],
+            'Organization Jobs': [
+                { name: 'Organize sports equipment', pay: 2, req: 'All organized', athletic: false },
+                { name: 'Organize shoe area', pay: 1, req: 'Shoes arranged', athletic: false },
+                { name: 'Organize coat closet', pay: 2, req: 'Neatly hung', athletic: false },
+                { name: 'Organize board games/cards', pay: 2, req: 'All organized', athletic: false },
+                { name: 'Organize craft/school supplies', pay: 2, req: 'All organized', athletic: false },
+                { name: 'Organize snack drawer/shelf', pay: 2, req: 'Organized', athletic: false },
+                { name: 'Organize one garage shelf', pay: 4, req: 'Shelf organized', athletic: false },
+                { name: 'Organize one storage bin', pay: 3, req: 'Bin organized', athletic: false },
+                { name: 'Label bins/shelves', pay: 3, req: 'All labeled', athletic: false }
+            ],
+            'Weekend Jobs': [
+                { name: 'Full bedroom deep clean', pay: 5, req: 'Complete', athletic: false },
+                { name: 'Full bathroom deep clean', pay: 5, req: 'Complete', athletic: false },
+                { name: 'Main-floor reset', pay: 5, req: 'Complete', athletic: false },
+                { name: 'Basement reset', pay: 5, req: 'Complete', athletic: false },
+                { name: 'Garage zone cleanup', pay: 6, req: 'One zone', athletic: false },
+                { name: 'Yard cleanup session', pay: 6, req: 'Complete', athletic: false },
+                { name: 'Help with mulch/landscaping', pay: 10, req: 'Completed', athletic: false },
+                { name: 'Donation cleanout project', pay: 8, req: 'Items bagged', athletic: false },
+                { name: 'Full dog-area cleanup', pay: 5, req: 'Complete', athletic: false },
+                { name: 'Full house trash/recycling sweep', pay: 4, req: 'All collected', athletic: false }
+            ],
+            'Athletic Tasks': [
+                { name: 'Juggling practice (15 min)', pay: 1, req: '15 min focused', athletic: true },
+                { name: 'Pushups (3×10)', pay: 1, req: 'Complete 3 sets', athletic: true },
+                { name: 'Sit-ups/crunches (3×15)', pay: 1, req: 'Complete 3 sets', athletic: true },
+                { name: 'Plank work', pay: 1, req: 'Hold 3×30 sec', athletic: true },
+                { name: 'Stretching (10 min)', pay: 1, req: '10 min full body', athletic: true },
+                { name: 'Wall passes (100 touches)', pay: 1, req: '100 touches', athletic: true },
+                { name: '2 loops run', pay: 2, req: 'Around pond 2x', athletic: true },
+                { name: '2 loops + sprint workout', pay: 3, req: 'Loops + sprints', athletic: true },
+                { name: 'Fitness circuit', pay: 5, req: '2 loops + 30 pushups + 30 situps', athletic: true },
+                { name: 'Agility footwork (10 min)', pay: 1, req: '10 min focused', athletic: true },
+                { name: '1 mile easy run', pay: 2, req: 'Easy pace', athletic: true },
+                { name: 'Sprint workout (8-10)', pay: 2, req: 'Short sprints', athletic: true },
+                { name: 'Fitness circuit (20 min)', pay: 3, req: '20 min mixed', athletic: true },
+                { name: 'Juggling (30 min)', pay: 2, req: '30 min focused', athletic: true },
+                { name: 'Footwork/agility ladder (20 min)', pay: 2, req: 'Ladder drills', athletic: true },
+                { name: 'Cone dribbling (20 min)', pay: 2, req: 'Dribble courses', athletic: true },
+                { name: 'Shooting practice (30 min)', pay: 2, req: '30 min shooting', athletic: true },
+                { name: 'Full athletic workout (45 min)', pay: 5, req: '45 min session', athletic: true },
+                { name: 'Run + strength combo', pay: 5, req: '1 mi run + core', athletic: true },
+                { name: 'Ball control workout (45 min)', pay: 5, req: 'Juggle, dribble, pass', athletic: true },
+                { name: 'Game-day prep workout', pay: 5, req: 'Stretch, run, core', athletic: true },
+                { name: 'Weekly athlete discipline', pay: 5, req: '4 approved workouts/week', athletic: true },
+                { name: 'New juggling personal best', pay: 10, req: 'Beat personal record', athletic: true }
             ]
         };
 
@@ -938,7 +1082,7 @@
             document.getElementById('pinModal').style.display = 'none';
         }
 
-        // ===== CELEBRATION & ANIMATIONS =====
+        // ===== CELEBRATION =====
         function celebrate() {
             const emoji = ['🎉', '🌟', '✨', '🎊', '💚', '⭐'];
             const celebration = document.createElement('div');
@@ -964,9 +1108,8 @@
         function render() {
             if (!parentMode) {
                 renderDashboard();
-                renderKids();
                 renderTasks();
-                renderIdeas();
+                renderKids();
                 renderRecords();
             } else {
                 renderReview();
@@ -983,7 +1126,7 @@
 
             kids.forEach(kid => {
                 const tasks = data.tasks[kid];
-                const athleticDone = tasks.filter(t => t.approved && t.isAthletic).length;
+                const athleticDone = tasks.filter(t => t.approved && t.athletic).length;
                 const athleticPercent = Math.min((athleticDone / 10) * 100, 100);
                 
                 html += `<div class="card kid-card ${kid}" onclick="toggleKidMode('${kid}')">
@@ -996,13 +1139,81 @@
                         <div class="stat-box"><div class="stat-label">Approved</div><div class="stat-value">${tasks.filter(t => t.approved && !t.paid).length}</div></div>
                     </div>
                     <div class="progress-container">
-                        <div class="progress-label"><span>🏃 Daily Athletics (${athleticDone}/10 = $10 Bonus)</span><span>${athleticDone}/10</span></div>
+                        <div class="progress-label"><span>🏃 Daily Athletics (${athleticDone}/10 = $5 Bonus)</span><span>${athleticDone}/10</span></div>
                         <div class="progress-bar"><div class="progress-fill" style="width: ${athleticPercent}%;"></div></div>
                     </div>
                 </div>`;
             });
 
             content.innerHTML = html;
+        }
+
+        function renderTasks() {
+            const content = document.getElementById('tasks-content');
+            const tasks = data.tasks[currentKid];
+            let html = '';
+
+            if (tasks.length === 0) {
+                html = `<div class="add-section">
+                    <h4>✨ Get Started!</h4>
+                    <p style="color: #065f46; margin-bottom: 1.5rem; font-weight: 600;">Add tasks below to start earning money</p>
+                </div>`;
+            } else {
+                const byStatus = {
+                    ready: tasks.filter(t => !t.completed),
+                    pending: tasks.filter(t => t.completed && !t.approved),
+                    approved: tasks.filter(t => t.approved && !t.paid),
+                    paid: tasks.filter(t => t.paid)
+                };
+
+                if (byStatus.ready.length > 0) {
+                    html += '<h3>📋 Ready to Do</h3>';
+                    byStatus.ready.forEach(task => html += renderTaskCard(task, currentKid));
+                }
+
+                if (byStatus.pending.length > 0) {
+                    html += '<h3>⏳ Awaiting Approval</h3>';
+                    byStatus.pending.forEach(task => html += renderTaskCard(task, currentKid));
+                }
+
+                if (byStatus.approved.length > 0) {
+                    html += '<h3>✅ Approved (Awaiting Payout)</h3>';
+                    byStatus.approved.forEach(task => html += renderTaskCard(task, currentKid));
+                }
+
+                if (byStatus.paid.length > 0) {
+                    html += '<h3>💰 Paid</h3>';
+                    byStatus.paid.forEach(task => html += renderTaskCard(task, currentKid));
+                }
+            }
+
+            // Add more tasks section
+            html += '<div class="add-section"><h4>➕ Add More Tasks</h4>';
+            Object.keys(allTasks).forEach(category => {
+                html += `<h3 style="margin-top: 1.25rem; margin-bottom: 0.75rem; background: white; border: none; padding: 0; border-left: none; color: #1f2937;">${category}</h3>`;
+                html += '<div class="task-grid">';
+                allTasks[category].forEach(task => {
+                    html += `<div class="task-card" onclick="addTask('${currentKid}', '${task.name.replace(/'/g, '\\\'')}', '${task.pay}', '${task.req.replace(/'/g, '\\\'')}', ${task.athletic}, ${task.checklist ? JSON.stringify(task.checklist).replace(/'/g, '\\\'') : 'null'})">
+                        <div class="task-card-name">${task.name}</div>
+                        <div class="task-card-pay">$${task.pay}</div>
+                    </div>`;
+                });
+                html += '</div>';
+            });
+            html += '</div>';
+
+            content.innerHTML = html;
+        }
+
+        function renderTaskCard(task, kid) {
+            const status = task.paid ? '✅ Paid' : task.approved ? '✅ Approved' : task.completed ? '⏳ Pending' : '📋 Ready';
+            return `<div class="task-item ${task.completed ? 'completed' : ''} ${task.approved ? 'approved' : ''}">
+                <div class="task-header"><div class="task-name">${task.name}</div><div class="task-pay">$${task.pay}</div></div>
+                <div class="task-requirement">${task.requirement}</div>
+                ${task.checklist && !task.completed ? `<div class="checklist">${task.checklist.map((item, i) => `<div class="checklist-item" onclick="toggleChecklistItem(event, '${kid}', ${task.id}, ${i})"><div class="checkbox ${(task.checklistProgress && task.checklistProgress[i]) ? 'checked' : ''}">✓</div><div class="checkbox-label">${item}</div></div>`).join('')}</div>` : ''}
+                <button ${task.completed || task.paid ? 'disabled' : ''} onclick="completeTask('${kid}', ${task.id})" style="margin-top: 0.75rem;">${task.completed ? '✓ Submitted' : 'Mark Done'}</button>
+                <span class="task-status">${status}</span>
+            </div>`;
         }
 
         function renderKids() {
@@ -1032,67 +1243,6 @@
                     </div>
                 </div>`;
             });
-
-            content.innerHTML = html;
-        }
-
-        function renderTasks() {
-            const content = document.getElementById('tasks-content');
-            const tasks = data.tasks[currentKid];
-            let html = '';
-
-            if (tasks.length === 0) {
-                html = '<div class="empty-state"><div class="empty-emoji">📋</div><p style="font-size: 1.125rem; font-weight: 700; margin-top: 1rem;">No tasks yet. Check the Ideas tab!</p></div>';
-            } else {
-                const byCategory = {};
-                tasks.forEach(t => {
-                    if (!byCategory[t.category]) byCategory[t.category] = [];
-                    byCategory[t.category].push(t);
-                });
-
-                Object.keys(byCategory).forEach(cat => {
-                    html += `<h3>${cat}</h3>`;
-                    byCategory[cat].forEach(task => {
-                        const status = task.paid ? '✅ Paid' : task.approved ? '✅ Approved' : task.completed ? '⏳ Pending' : '📋 Ready';
-                        html += `<div class="task-item ${task.completed ? 'completed' : ''} ${task.approved ? 'approved' : ''}">
-                            <div class="task-header"><div class="task-name">${task.name}</div><div class="task-pay">$${task.pay}</div></div>
-                            <div class="task-requirement">${task.requirement}</div>
-                            ${task.checklist && !task.completed ? `<div class="checklist">${task.checklist.map((item, i) => `<div class="checklist-item" onclick="toggleChecklistItem(event, '${currentKid}', ${task.id}, ${i})"><div class="checkbox ${(task.checklistProgress && task.checklistProgress[i]) ? 'checked' : ''}">✓</div><div class="checkbox-label">${item}</div></div>`).join('')}</div>` : ''}
-                            <button ${task.completed || task.paid ? 'disabled' : ''} onclick="completeTask('${currentKid}', ${task.id})" style="margin-top: 0.75rem;">${task.completed ? '✓ Submitted' : 'Mark Done'}</button>
-                            <span class="task-status">${status}</span>
-                        </div>`;
-                    });
-                });
-            }
-
-            content.innerHTML = html;
-        }
-
-        function renderIdeas() {
-            const content = document.getElementById('ideas-content');
-            let html = '<button class="btn-block" onclick="randomTask(currentKid)" style="background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); margin-bottom: 1.5rem; font-size: 1.125rem; padding: 1.25rem;">🎲 Surprise Me!</button>';
-
-            html += '<h3>💪 Daily Athletic (Required 2/day)</h3>';
-            html += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.875rem;">';
-            taskTemplates.athletic.slice(0, 8).forEach(task => {
-                html += `<div class="card" style="padding: 1rem; cursor: pointer; text-align: center;" onclick="addTask('${currentKid}', '${task.name.replace(/'/g, '\\\'')}', '${task.category.replace(/'/g, '\\\'')}', ${task.pay}, '${task.requirement.replace(/'/g, '\\\'')}', true)">
-                    <div style="font-weight: 800; font-size: 0.95rem; margin-bottom: 0.5rem;">${task.name}</div>
-                    <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.75rem;">⏱ ${task.time}</div>
-                    <div style="font-weight: 900; color: #10b981; font-size: 1.25rem;">$${task.pay}</div>
-                </div>`;
-            });
-            html += '</div>';
-
-            html += '<h3>🏠 House Jobs</h3>';
-            html += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.875rem;">';
-            taskTemplates.house.slice(0, 6).forEach(task => {
-                html += `<div class="card" style="padding: 1rem; cursor: pointer; text-align: center;" onclick="addTask('${currentKid}', '${task.name.replace(/'/g, '\\\'')}', '${task.category.replace(/'/g, '\\\'')}', ${task.pay}, '${task.requirement.replace(/'/g, '\\\'')}', false)">
-                    <div style="font-weight: 800; font-size: 0.95rem; margin-bottom: 0.5rem;">${task.name}</div>
-                    <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.75rem;">⏱ ${task.time}</div>
-                    <div style="font-weight: 900; color: #10b981; font-size: 1.25rem;">$${task.pay}</div>
-                </div>`;
-            });
-            html += '</div>';
 
             content.innerHTML = html;
         }
@@ -1169,22 +1319,20 @@
         }
 
         // ===== TASK FUNCTIONS =====
-        function addTask(kid, name, category, pay, requirement, isAthletic = false) {
+        function addTask(kid, name, pay, requirement, athletic, checklist) {
             const newTask = {
                 id: Date.now(),
                 name,
-                category,
                 pay,
                 requirement,
+                athletic,
                 completed: false,
                 approved: false,
                 paid: false,
-                isAthletic,
-                checklist: null,
+                checklist: checklist && typeof checklist === 'string' ? null : checklist,
                 checklistProgress: null
             };
             data.tasks[kid].push(newTask);
-            checkAndAwardBadges(kid);
             saveData();
             render();
         }
@@ -1194,9 +1342,8 @@
             if (task && !task.completed) {
                 task.completed = true;
                 data.kids[kid].pending += task.pay;
-                if (task.isAthletic) data.kids[kid].athleticWeek++;
+                if (task.athletic) data.kids[kid].athleticWeek++;
                 celebrate();
-                checkAndAwardBadges(kid);
                 saveData();
                 render();
             }
@@ -1225,12 +1372,11 @@
                 task.approved = true;
                 data.kids[kid].pending -= task.pay;
                 data.kids[kid].approved += task.pay;
-                if (task.isAthletic && data.kids[kid].athleticWeek >= 10) {
-                    data.kids[kid].pending += 10;
+                if (task.athletic && data.kids[kid].athleticWeek >= 10) {
+                    data.kids[kid].pending += 5;
                     data.kids[kid].athleticWeek = 0;
-                    addBadge(kid, 'Weekly Athlete');
+                    if (!data.kids[kid].badges.includes('Weekly Athlete')) data.kids[kid].badges.push('Weekly Athlete');
                 }
-                checkAndAwardBadges(kid);
                 saveData();
                 render();
             }
@@ -1241,7 +1387,7 @@
             if (task) {
                 task.completed = false;
                 data.kids[kid].pending -= task.pay;
-                if (task.isAthletic) data.kids[kid].athleticWeek--;
+                if (task.athletic) data.kids[kid].athleticWeek--;
                 saveData();
                 render();
             }
@@ -1254,7 +1400,7 @@
                 data.kids[kid].earned += approved;
                 data.kids[kid].approved -= approved;
                 data.kids[kid].paidHistory.push({ amount: approved, date: new Date().toLocaleDateString() });
-                addBadge(kid, 'Payout Ready');
+                if (!data.kids[kid].badges.includes('Payout Ready')) data.kids[kid].badges.push('Payout Ready');
                 saveData();
                 celebrate();
                 render();
@@ -1263,25 +1409,6 @@
 
         function payoutAll() {
             kids.forEach(kid => payoutKid(kid));
-        }
-
-        function randomTask(kid) {
-            const allTasks = [...taskTemplates.house, ...taskTemplates.athletic];
-            const task = allTasks[Math.floor(Math.random() * allTasks.length)];
-            addTask(kid, task.name, task.category, task.pay, task.requirement, task.isAthletic);
-        }
-
-        function addBadge(kid, badge) {
-            if (!data.kids[kid].badges.includes(badge)) {
-                data.kids[kid].badges.push(badge);
-            }
-        }
-
-        function checkAndAwardBadges(kid) {
-            const tasks = data.tasks[kid];
-            if (tasks.length === 1) addBadge(kid, 'First Task');
-            if (tasks.filter(t => t.completed && t.category.includes('Bedroom')).length >= 1) addBadge(kid, 'Bedroom Boss');
-            if (tasks.filter(t => t.completed && t.category.includes('Bathroom')).length >= 1) addBadge(kid, 'Bathroom Beast');
         }
 
         // ===== UTILITY =====
