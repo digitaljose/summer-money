@@ -1,0 +1,871 @@
+import React, { useState, useEffect } from 'react';
+import { ChevronRight, Plus, CheckCircle, Clock, Zap, Home, Target, Lightbulb, DollarSign, BarChart3, Settings } from 'lucide-react';
+
+const SummerMoney = () => {
+  const [currentTab, setCurrentTab] = useState('dashboard');
+  const [isParentMode, setIsParentMode] = useState(false);
+  const [tasks, setTasks] = useState(() => {
+    const saved = localStorage.getItem('summerMoney_tasks');
+    return saved ? JSON.parse(saved) : initializeTasks();
+  });
+  
+  const [earnings, setEarnings] = useState(() => {
+    const saved = localStorage.getItem('summerMoney_earnings');
+    return saved ? JSON.parse(saved) : {
+      approved: 0,
+      paid: 0,
+      paidHistory: [],
+      allTimeTotal: 0,
+      houseJobsTotal: 0,
+      soccerJobsTotal: 0
+    };
+  });
+
+  const [weeklyBonus, setWeeklyBonus] = useState(() => {
+    const saved = localStorage.getItem('summerMoney_weeklyBonus');
+    return saved ? JSON.parse(saved) : {
+      count: 0,
+      claimed: false,
+      weekStartDate: getWeekStart()
+    };
+  });
+
+  const [showCustomForm, setShowCustomForm] = useState(false);
+  const [customTask, setCustomTask] = useState({ name: '', category: 'House', pay: 0, requirement: '', notes: '' });
+
+  // Save data to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('summerMoney_tasks', JSON.stringify(tasks));
+  }, [tasks]);
+
+  useEffect(() => {
+    localStorage.setItem('summerMoney_earnings', JSON.stringify(earnings));
+  }, [earnings]);
+
+  useEffect(() => {
+    localStorage.setItem('summerMoney_weeklyBonus', JSON.stringify(weeklyBonus));
+  }, [weeklyBonus]);
+
+  // Check if week has reset
+  useEffect(() => {
+    const today = getWeekStart();
+    if (weeklyBonus.weekStartDate !== today) {
+      setWeeklyBonus({
+        count: 0,
+        claimed: false,
+        weekStartDate: today
+      });
+    }
+  }, []);
+
+  function getWeekStart() {
+    const today = new Date();
+    const day = today.getDay();
+    const diff = today.getDate() - day;
+    const sunday = new Date(today.setDate(diff));
+    return sunday.toISOString().split('T')[0];
+  }
+
+  function initializeTasks() {
+    return {
+      basicResponsibilities: [
+        { id: 1, name: 'Put dirty clothes in hamper', category: 'House', completed: false, dateCompleted: null },
+        { id: 2, name: 'Put clean laundry away', category: 'House', completed: false, dateCompleted: null },
+        { id: 3, name: 'Keep room picked up', category: 'House', completed: false, dateCompleted: null },
+        { id: 4, name: 'Put dishes in dishwasher', category: 'House', completed: false, dateCompleted: null },
+        { id: 5, name: 'Throw away trash from snacks', category: 'House', completed: false, dateCompleted: null },
+        { id: 6, name: 'Help clean up after himself', category: 'House', completed: false, dateCompleted: null },
+      ],
+      paidTasks: [
+        // House - Small
+        { id: 101, name: 'Take out trash', category: 'House', pay: 2, requirement: 'Empty all trash bins', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 102, name: 'Take recycling out', category: 'House', pay: 2, requirement: 'Full recycling bin to curb', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 103, name: 'Wipe bathroom counter and sink', category: 'House', pay: 2, requirement: 'Clean and dry', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 104, name: 'Sweep kitchen', category: 'House', pay: 2, requirement: 'Entire floor', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 105, name: 'Vacuum one room', category: 'House', pay: 3, requirement: 'Thorough vacuum job', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 106, name: 'Fold a basket of laundry', category: 'House', pay: 3, requirement: 'All folded and ready to put away', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 107, name: 'Empty dishwasher', category: 'House', pay: 2, requirement: 'All dishes put away', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 108, name: 'Wipe kitchen table and counters', category: 'House', pay: 2, requirement: 'Clean and wiped down', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 109, name: 'Pick up living room', category: 'House', pay: 2, requirement: 'Tidy and organized', status: 'pending', dateCompleted: null, notes: '' },
+        
+        // House - Medium
+        { id: 201, name: 'Clean bedroom fully', category: 'House', pay: 5, requirement: 'Bed made, floor clear, surfaces organized', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 202, name: 'Vacuum upstairs or downstairs', category: 'House', pay: 5, requirement: 'Entire level vacuumed', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 203, name: 'Clean bathroom', category: 'House', pay: 5, requirement: 'Toilet, sink, tub/shower, floor', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 204, name: 'Help carry groceries and put them away', category: 'House', pay: 5, requirement: 'Everything unpacked and organized', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 205, name: 'Pull weeds for 20 minutes', category: 'House', pay: 5, requirement: '20 min focused weeding', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 206, name: 'Clean out car trash and wipe surfaces', category: 'House', pay: 5, requirement: 'Interior cleaned', status: 'pending', dateCompleted: null, notes: '' },
+        
+        // House - Bigger
+        { id: 301, name: 'Wash car exterior', category: 'House', pay: 10, requirement: 'Washed and dried', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 302, name: 'Deep clean bedroom', category: 'House', pay: 10, requirement: 'Everything organized, dusted', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 303, name: 'Organize closet or drawers', category: 'House', pay: 10, requirement: 'Neatly folded and organized', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 304, name: 'Yard work (45-60 min)', category: 'House', pay: 15, requirement: '45-60 minutes of focused work', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 305, name: 'Clean garage area with direction', category: 'House', pay: 15, requirement: 'Organized and swept', status: 'pending', dateCompleted: null, notes: '' },
+        
+        // Soccer - Small
+        { id: 401, name: 'Juggling practice (10 min)', category: 'Soccer', pay: 2, requirement: '10 minutes focused', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 402, name: 'Wall passes (100 touches)', category: 'Soccer', pay: 2, requirement: '100 touches against wall', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 403, name: 'Pushups (3 sets of 10)', category: 'Soccer', pay: 2, requirement: 'Complete 3×10', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 404, name: 'Sit-ups/Crunches (3 sets of 15)', category: 'Soccer', pay: 2, requirement: 'Complete 3×15', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 405, name: 'Plank work (3 rounds of 30 sec)', category: 'Soccer', pay: 2, requirement: 'Hold 3×30 seconds', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 406, name: 'Stretching routine (10 min)', category: 'Soccer', pay: 2, requirement: 'Full body stretch', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 407, name: 'Ball mastery touches (10 min)', category: 'Soccer', pay: 3, requirement: '10 minutes of touch work', status: 'pending', dateCompleted: null, notes: '' },
+        
+        // Soccer - Medium
+        { id: 501, name: 'Easy run (1 mile)', category: 'Soccer', pay: 5, requirement: '1 mile easy pace', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 502, name: 'Sprint workout (8-10 sprints)', category: 'Soccer', pay: 5, requirement: 'Explosive short sprints', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 503, name: 'Fitness circuit (20 min)', category: 'Soccer', pay: 5, requirement: '20 minutes mixed exercises', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 504, name: 'Juggling challenge (20 min)', category: 'Soccer', pay: 5, requirement: '20 minutes focused juggling', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 505, name: 'Footwork/agility ladder (20 min)', category: 'Soccer', pay: 5, requirement: 'Ladder drills for 20 min', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 506, name: 'Cone dribbling workout (20 min)', category: 'Soccer', pay: 5, requirement: 'Dribble courses for 20 min', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 507, name: 'Shooting practice (30 min)', category: 'Soccer', pay: 5, requirement: '30 minutes shooting', status: 'pending', dateCompleted: null, notes: '' },
+        
+        // Soccer - Bigger
+        { id: 601, name: 'Full soccer workout (45 min)', category: 'Soccer', pay: 10, requirement: 'Comprehensive 45 min session', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 602, name: 'Run + strength combo (1 mi + core)', category: 'Soccer', pay: 10, requirement: '1 mi run + pushups + sit-ups + planks', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 603, name: 'Ball control workout (45 min)', category: 'Soccer', pay: 10, requirement: 'Juggling, dribbling, passing', status: 'pending', dateCompleted: null, notes: '' },
+        { id: 604, name: 'Game-day prep workout', category: 'Soccer', pay: 10, requirement: 'Stretching, light run, touches, core', status: 'pending', dateCompleted: null, notes: '' },
+      ],
+      customTasks: []
+    };
+  }
+
+  const markTaskComplete = (taskId, isBasic = false) => {
+    const today = new Date().toISOString().split('T')[0];
+    
+    setTasks(prev => ({
+      ...prev,
+      [isBasic ? 'basicResponsibilities' : 'paidTasks']: (isBasic ? prev.basicResponsibilities : prev.paidTasks).map(t =>
+        t.id === taskId ? { ...t, completed: !t.completed, dateCompleted: !t.completed ? today : null } : t
+      )
+    }));
+  };
+
+  const markTaskComplete_Paid = (taskId) => {
+    const today = new Date().toISOString().split('T')[0];
+    setTasks(prev => ({
+      ...prev,
+      paidTasks: prev.paidTasks.map(t =>
+        t.id === taskId
+          ? { ...t, status: 'pending', dateCompleted: t.status === 'paid' ? null : today }
+          : t
+      ),
+      customTasks: prev.customTasks.map(t =>
+        t.id === taskId
+          ? { ...t, status: 'pending', dateCompleted: t.status === 'paid' ? null : today }
+          : t
+      )
+    }));
+
+    // Increment weekly bonus counter for soccer tasks
+    const task = [...tasks.paidTasks, ...tasks.customTasks].find(t => t.id === taskId);
+    if (task && task.category === 'Soccer') {
+      setWeeklyBonus(prev => ({
+        ...prev,
+        count: Math.min(prev.count + 1, 4)
+      }));
+    }
+  };
+
+  const approveTask = (taskId, isCustom = false) => {
+    const list = isCustom ? 'customTasks' : 'paidTasks';
+    const task = tasks[list].find(t => t.id === taskId);
+    
+    setTasks(prev => ({
+      ...prev,
+      [list]: prev[list].map(t =>
+        t.id === taskId ? { ...t, status: 'approved' } : t
+      )
+    }));
+
+    setEarnings(prev => ({
+      ...prev,
+      approved: prev.approved + task.pay,
+      [task.category === 'House' ? 'houseJobsTotal' : 'soccerJobsTotal']: prev[task.category === 'House' ? 'houseJobsTotal' : 'soccerJobsTotal'] + task.pay
+    }));
+  };
+
+  const rejectTask = (taskId, isCustom = false) => {
+    const list = isCustom ? 'customTasks' : 'paidTasks';
+    setTasks(prev => ({
+      ...prev,
+      [list]: prev[list].map(t =>
+        t.id === taskId ? { ...t, status: 'rejected', dateCompleted: null } : t
+      )
+    }));
+  };
+
+  const markAsPaid = () => {
+    setEarnings(prev => ({
+      ...prev,
+      paid: prev.paid + prev.approved,
+      paidHistory: [...prev.paidHistory, { amount: prev.approved, date: new Date().toLocaleDateString() }],
+      allTimeTotal: prev.allTimeTotal + prev.approved,
+      approved: 0
+    }));
+
+    setTasks(prev => ({
+      ...prev,
+      paidTasks: prev.paidTasks.map(t => t.status === 'approved' ? { ...t, status: 'paid' } : t),
+      customTasks: prev.customTasks.map(t => t.status === 'approved' ? { ...t, status: 'paid' } : t)
+    }));
+  };
+
+  const claimWeeklyBonus = () => {
+    if (weeklyBonus.count >= 4 && !weeklyBonus.claimed) {
+      setEarnings(prev => ({
+        ...prev,
+        approved: prev.approved + 10,
+        soccerJobsTotal: prev.soccerJobsTotal + 10
+      }));
+      setWeeklyBonus(prev => ({ ...prev, claimed: true }));
+    }
+  };
+
+  const addCustomTask = () => {
+    if (customTask.name && customTask.pay > 0) {
+      const newTask = {
+        id: Date.now(),
+        name: customTask.name,
+        category: customTask.category,
+        pay: parseInt(customTask.pay),
+        requirement: customTask.requirement,
+        status: 'pending',
+        dateCompleted: null,
+        notes: customTask.notes
+      };
+      setTasks(prev => ({ ...prev, customTasks: [...prev.customTasks, newTask] }));
+      setCustomTask({ name: '', category: 'House', pay: 0, requirement: '', notes: '' });
+      setShowCustomForm(false);
+    }
+  };
+
+  const deleteCustomTask = (taskId) => {
+    setTasks(prev => ({
+      ...prev,
+      customTasks: prev.customTasks.filter(t => t.id !== taskId)
+    }));
+  };
+
+  const getTodaysTasks = () => {
+    const today = new Date().toISOString().split('T')[0];
+    return tasks.paidTasks.filter(t => t.dateCompleted === today) || [];
+  };
+
+  const getThisWeeksTasks = () => {
+    const today = new Date();
+    const weekStart = new Date(today.setDate(today.getDate() - today.getDay()));
+    const startDate = weekStart.toISOString().split('T')[0];
+    return tasks.paidTasks.filter(t => t.dateCompleted && t.dateCompleted >= startDate) || [];
+  };
+
+  const getThisWeeksSoccer = () => {
+    return getThisWeeksTasks().filter(t => t.category === 'Soccer' && t.status === 'approved') || [];
+  };
+
+  const getThisWeeksHouse = () => {
+    return getThisWeeksTasks().filter(t => t.category === 'House' && t.status === 'approved') || [];
+  };
+
+  const getPendingApproval = () => {
+    return [...tasks.paidTasks, ...tasks.customTasks].filter(t => t.status === 'pending' && t.dateCompleted) || [];
+  };
+
+  // ===== DASHBOARD =====
+  const DashboardTab = () => (
+    <div className="space-y-6 pb-24">
+      {/* Welcome Banner */}
+      <div className="bg-gradient-to-br from-emerald-400 via-teal-400 to-cyan-400 rounded-2xl p-6 text-white shadow-xl">
+        <h2 className="text-2xl font-black mb-2">Summer Money</h2>
+        <p className="text-sm opacity-90">Track tasks, earn money, build discipline</p>
+      </div>
+
+      {/* Earnings Summary */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="bg-gradient-to-br from-emerald-100 to-teal-100 rounded-xl p-4 border-2 border-emerald-300">
+          <p className="text-xs font-semibold text-emerald-700 mb-1">Pending Payout</p>
+          <p className="text-2xl font-black text-emerald-900">${earnings.approved}</p>
+        </div>
+        <div className="bg-gradient-to-br from-amber-100 to-orange-100 rounded-xl p-4 border-2 border-amber-300">
+          <p className="text-xs font-semibold text-amber-700 mb-1">Total Earned</p>
+          <p className="text-2xl font-black text-amber-900">${earnings.allTimeTotal}</p>
+        </div>
+      </div>
+
+      {/* Weekly Bonus Progress */}
+      <div className="bg-white rounded-xl p-4 border-2 border-purple-200 shadow-md">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-bold text-purple-900">⚡ Weekly Soccer Bonus</h3>
+          <span className="text-xs font-bold bg-purple-200 text-purple-900 px-3 py-1 rounded-full">${weeklyBonus.claimed ? '0' : '10'}</span>
+        </div>
+        <div className="bg-purple-100 rounded-full h-3 overflow-hidden mb-2">
+          <div
+            className="bg-gradient-to-r from-purple-400 to-pink-400 h-full transition-all duration-300"
+            style={{ width: `${(weeklyBonus.count / 4) * 100}%` }}
+          ></div>
+        </div>
+        <p className="text-sm font-semibold text-purple-900">
+          {weeklyBonus.count} of 4 soccer workouts completed
+        </p>
+        {weeklyBonus.count >= 4 && !weeklyBonus.claimed && (
+          <button
+            onClick={claimWeeklyBonus}
+            className="mt-3 w-full bg-gradient-to-r from-purple-400 to-pink-400 text-white font-bold py-2 rounded-lg hover:shadow-lg transition-all"
+          >
+            Claim $10 Bonus! 🎉
+          </button>
+        )}
+        {weeklyBonus.claimed && <p className="mt-2 text-sm text-purple-700 font-semibold">✓ Bonus claimed this week!</p>}
+      </div>
+
+      {/* Quick Stats */}
+      <div className="grid grid-cols-3 gap-2">
+        <div className="bg-blue-100 rounded-lg p-3 text-center border border-blue-300">
+          <p className="text-xs text-blue-700 font-semibold">Today's</p>
+          <p className="text-xl font-black text-blue-900">{getTodaysTasks().length}</p>
+          <p className="text-xs text-blue-600">tasks</p>
+        </div>
+        <div className="bg-green-100 rounded-lg p-3 text-center border border-green-300">
+          <p className="text-xs text-green-700 font-semibold">This Week</p>
+          <p className="text-xl font-black text-green-900">{getThisWeeksTasks().length}</p>
+          <p className="text-xs text-green-600">completed</p>
+        </div>
+        <div className="bg-orange-100 rounded-lg p-3 text-center border border-orange-300">
+          <p className="text-xs text-orange-700 font-semibold">Soccer</p>
+          <p className="text-xl font-black text-orange-900">{getThisWeeksSoccer().length}</p>
+          <p className="text-xs text-orange-600">workouts</p>
+        </div>
+      </div>
+
+      {/* House Chores Counter */}
+      <div className="bg-gradient-to-r from-blue-100 to-cyan-100 rounded-xl p-4 border-2 border-blue-300">
+        <p className="text-sm font-bold text-blue-900 mb-2">📚 Basic Responsibilities Completed</p>
+        <p className="text-lg font-black text-blue-900">{tasks.basicResponsibilities.filter(t => t.completed).length} / {tasks.basicResponsibilities.length}</p>
+      </div>
+    </div>
+  );
+
+  // ===== TASKS TAB =====
+  const TasksTab = () => (
+    <div className="space-y-6 pb-24">
+      <h2 className="text-2xl font-black text-gray-800">My Tasks</h2>
+
+      {/* Basic Responsibilities */}
+      <div>
+        <h3 className="text-lg font-bold text-gray-700 mb-3 flex items-center gap-2">
+          <Home size={20} className="text-blue-600" />
+          Basic Responsibilities (No Pay)
+        </h3>
+        <div className="space-y-2">
+          {tasks.basicResponsibilities.map(task => (
+            <div
+              key={task.id}
+              onClick={() => markTaskComplete(task.id, true)}
+              className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                task.completed
+                  ? 'bg-green-100 border-green-400 opacity-70'
+                  : 'bg-white border-gray-300 hover:border-blue-400'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div
+                  className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                    task.completed ? 'bg-green-400 border-green-600' : 'border-gray-400'
+                  }`}
+                >
+                  {task.completed && <span className="text-white text-sm">✓</span>}
+                </div>
+                <span className={task.completed ? 'line-through text-gray-500' : 'font-semibold text-gray-800'}>
+                  {task.name}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* House Jobs */}
+      <div>
+        <h3 className="text-lg font-bold text-gray-700 mb-3 flex items-center gap-2">
+          🏠 House Jobs
+        </h3>
+        <div className="space-y-2">
+          {tasks.paidTasks
+            .filter(t => t.category === 'House')
+            .map(task => (
+              <TaskCard key={task.id} task={task} onComplete={() => markTaskComplete_Paid(task.id)} />
+            ))}
+        </div>
+      </div>
+
+      {/* Soccer Jobs */}
+      <div>
+        <h3 className="text-lg font-bold text-gray-700 mb-3 flex items-center gap-2">
+          ⚽ Soccer Player Jobs
+        </h3>
+        <div className="space-y-2">
+          {tasks.paidTasks
+            .filter(t => t.category === 'Soccer')
+            .map(task => (
+              <TaskCard key={task.id} task={task} onComplete={() => markTaskComplete_Paid(task.id)} />
+            ))}
+        </div>
+      </div>
+
+      {/* Custom Tasks */}
+      {tasks.customTasks.length > 0 && (
+        <div>
+          <h3 className="text-lg font-bold text-gray-700 mb-3">📝 Custom Tasks</h3>
+          <div className="space-y-2">
+            {tasks.customTasks.map(task => (
+              <TaskCard key={task.id} task={task} onComplete={() => markTaskComplete_Paid(task.id)} />
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  const TaskCard = ({ task, onComplete }) => (
+    <div className="bg-white border-2 border-gray-200 rounded-lg p-3 hover:shadow-md transition-all">
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <h4 className="font-bold text-gray-800">{task.name}</h4>
+          <p className="text-xs text-gray-600 mt-1">{task.requirement}</p>
+          {task.notes && <p className="text-xs text-blue-600 mt-1">Note: {task.notes}</p>}
+          <div className="flex items-center gap-2 mt-2">
+            <span className="text-xs font-bold bg-emerald-200 text-emerald-900 px-2 py-1 rounded">
+              ${task.pay}
+            </span>
+            <span className="text-xs font-semibold text-gray-600 px-2 py-1 rounded bg-gray-100">
+              {task.status === 'pending' && !task.dateCompleted && 'Not Started'}
+              {task.status === 'pending' && task.dateCompleted && 'Pending Approval'}
+              {task.status === 'approved' && 'Approved ✓'}
+              {task.status === 'paid' && 'Paid ✓'}
+              {task.status === 'rejected' && 'Rejected'}
+            </span>
+          </div>
+        </div>
+        <button
+          onClick={onComplete}
+          disabled={task.status === 'approved' || task.status === 'paid'}
+          className={`ml-2 px-3 py-2 rounded-lg font-bold text-sm transition-all ${
+            task.status === 'approved' || task.status === 'paid'
+              ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+              : 'bg-emerald-400 text-white hover:bg-emerald-500 active:scale-95'
+          }`}
+        >
+          {task.dateCompleted && task.status === 'pending' ? '✓ Done' : 'Mark Done'}
+        </button>
+      </div>
+    </div>
+  );
+
+  // ===== IDEAS TAB =====
+  const IdeasTab = () => {
+    const [surprise, setSurprise] = useState(null);
+
+    const ideas = {
+      'Quick Money (5-10 min)': [
+        { title: 'Take out trash', icon: '🗑️', pay: '$2' },
+        { title: 'Wipe bathroom sink', icon: '🚿', pay: '$2' },
+        { title: 'Sweep kitchen', icon: '🧹', pay: '$2' },
+        { title: 'Empty dishwasher', icon: '🍽️', pay: '$2' },
+        { title: 'Juggling practice (10 min)', icon: '⚽', pay: '$2' },
+        { title: 'Wall passes (100 touches)', icon: '⚽', pay: '$2' },
+        { title: 'Stretching (10 min)', icon: '🧘', pay: '$2' },
+      ],
+      'Bigger Money (30-60 min)': [
+        { title: 'Wash car exterior', icon: '🚗', pay: '$10' },
+        { title: 'Yard work (45-60 min)', icon: '🌳', pay: '$10-15' },
+        { title: 'Full soccer workout (45 min)', icon: '⚽', pay: '$10' },
+        { title: 'Deep clean bedroom', icon: '🛏️', pay: '$10' },
+        { title: 'Organize closet', icon: '👕', pay: '$10' },
+      ],
+      'Get Stronger': [
+        { title: 'Pushups (3×10)', icon: '💪', pay: '$2' },
+        { title: 'Sit-ups (3×15)', icon: '💪', pay: '$2' },
+        { title: 'Plank holds (3×30s)', icon: '💪', pay: '$2' },
+        { title: 'Sprint workout', icon: '🏃', pay: '$5' },
+        { title: 'Easy 1-mile run', icon: '🏃', pay: '$5' },
+      ],
+      'Level Up Your Skills': [
+        { title: 'Juggling (20 min)', icon: '⚽', pay: '$5' },
+        { title: 'Cone dribbling (20 min)', icon: '⚽', pay: '$5' },
+        { title: 'Shooting practice (30 min)', icon: '⚽', pay: '$5' },
+        { title: 'Ball control session (45 min)', icon: '⚽', pay: '$10' },
+      ],
+      'Keep Home Fresh': [
+        { title: 'Organize closet', icon: '👕', pay: '$10' },
+        { title: 'Fold laundry basket', icon: '🧺', pay: '$3' },
+        { title: 'Vacuum one room', icon: '🧹', pay: '$3' },
+        { title: 'Pick up living room', icon: '🏠', pay: '$2' },
+      ]
+    };
+
+    const allIdeas = Object.values(ideas).flatMap(cat => cat);
+
+    const getSurpriseIdea = () => {
+      setSurprise(allIdeas[Math.floor(Math.random() * allIdeas.length)]);
+    };
+
+    return (
+      <div className="space-y-5 pb-24">
+        <div className="bg-gradient-to-r from-amber-400 to-orange-400 rounded-2xl p-5 text-white shadow-lg">
+          <h2 className="text-2xl font-black mb-2">What to Do Today?</h2>
+          <p className="text-sm opacity-90">Explore ideas to earn money and stay active</p>
+        </div>
+
+        <button
+          onClick={getSurpriseIdea}
+          className="w-full bg-gradient-to-r from-pink-400 to-red-400 text-white font-black py-3 rounded-xl hover:shadow-lg transition-all active:scale-95"
+        >
+          🎲 Surprise Me!
+        </button>
+
+        {surprise && (
+          <div className="bg-white border-4 border-pink-400 rounded-xl p-4 shadow-lg">
+            <p className="text-3xl mb-2">{surprise.icon}</p>
+            <h3 className="text-xl font-black text-gray-800">{surprise.title}</h3>
+            <p className="text-lg font-bold text-pink-600 mt-2">{surprise.pay}</p>
+          </div>
+        )}
+
+        {Object.entries(ideas).map(([category, items]) => (
+          <div key={category}>
+            <h3 className="text-lg font-bold text-gray-700 mb-2">{category}</h3>
+            <div className="grid grid-cols-2 gap-2">
+              {items.map((idea, idx) => (
+                <div key={idx} className="bg-white border-2 border-gray-200 rounded-lg p-3 hover:shadow-md transition-all">
+                  <p className="text-2xl mb-1">{idea.icon}</p>
+                  <h4 className="text-sm font-bold text-gray-800 leading-tight">{idea.title}</h4>
+                  <p className="text-xs font-bold text-emerald-600 mt-1">{idea.pay}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  // ===== PARENT REVIEW TAB =====
+  const ParentReviewTab = () => {
+    const pending = getPendingApproval();
+
+    return (
+      <div className="space-y-4 pb-24">
+        <div className="bg-gradient-to-r from-indigo-400 to-purple-400 rounded-2xl p-5 text-white shadow-lg">
+          <h2 className="text-2xl font-black mb-1">Parent Review</h2>
+          <p className="text-sm opacity-90">Approve or reject completed tasks</p>
+        </div>
+
+        {pending.length === 0 ? (
+          <div className="bg-white rounded-xl p-8 text-center border-2 border-dashed border-gray-300">
+            <p className="text-2xl mb-2">✓</p>
+            <p className="font-bold text-gray-800">All caught up!</p>
+            <p className="text-sm text-gray-600 mt-1">No pending tasks to review</p>
+          </div>
+        ) : (
+          <>
+            <div className="bg-yellow-100 border-l-4 border-yellow-500 p-3 rounded">
+              <p className="font-bold text-yellow-900">{pending.length} task{pending.length !== 1 ? 's' : ''} awaiting approval</p>
+            </div>
+            <div className="space-y-3">
+              {pending.map(task => (
+                <div key={task.id} className="bg-white border-2 border-gray-200 rounded-lg p-4">
+                  <h4 className="font-bold text-gray-800">{task.name}</h4>
+                  <p className="text-sm text-gray-600 mt-1">Category: {task.category}</p>
+                  <p className="text-sm text-gray-600">Requirement: {task.requirement}</p>
+                  <p className="text-sm text-gray-600">Completed: {task.dateCompleted}</p>
+                  {task.notes && <p className="text-sm text-blue-600 mt-1">Notes: {task.notes}</p>}
+                  <p className="text-lg font-bold text-emerald-600 mt-2">${task.pay}</p>
+                  <div className="flex gap-2 mt-3">
+                    <button
+                      onClick={() => approveTask(task.id, !tasks.paidTasks.includes(task))}
+                      className="flex-1 bg-emerald-500 text-white font-bold py-2 rounded-lg hover:bg-emerald-600 transition-all"
+                    >
+                      ✓ Approve
+                    </button>
+                    <button
+                      onClick={() => rejectTask(task.id, !tasks.paidTasks.includes(task))}
+                      className="flex-1 bg-red-400 text-white font-bold py-2 rounded-lg hover:bg-red-500 transition-all"
+                    >
+                      ✗ Reject
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    );
+  };
+
+  // ===== EARNINGS TAB =====
+  const EarningsTab = () => (
+    <div className="space-y-5 pb-24">
+      <div className="bg-gradient-to-r from-green-400 to-emerald-400 rounded-2xl p-5 text-white shadow-lg">
+        <h2 className="text-2xl font-black mb-1">Earnings & Payouts</h2>
+        <p className="text-sm opacity-90">Track your progress to getting paid</p>
+      </div>
+
+      {/* Pending Payout */}
+      <div className="bg-yellow-100 border-2 border-yellow-400 rounded-xl p-4">
+        <p className="text-sm font-semibold text-yellow-900 mb-1">Pending Payout (Approved)</p>
+        <p className="text-3xl font-black text-yellow-900">${earnings.approved}</p>
+        {earnings.approved > 0 && (
+          <button
+            onClick={markAsPaid}
+            className="mt-3 w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold py-2 rounded-lg hover:shadow-lg transition-all active:scale-95"
+          >
+            Mark as Paid 💰
+          </button>
+        )}
+      </div>
+
+      {/* Earnings Breakdown */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="bg-gradient-to-br from-blue-100 to-cyan-100 rounded-xl p-4 border-2 border-blue-300">
+          <p className="text-xs font-semibold text-blue-700 mb-1">House Jobs</p>
+          <p className="text-2xl font-black text-blue-900">${earnings.houseJobsTotal}</p>
+        </div>
+        <div className="bg-gradient-to-br from-orange-100 to-amber-100 rounded-xl p-4 border-2 border-orange-300">
+          <p className="text-xs font-semibold text-orange-700 mb-1">Soccer Jobs</p>
+          <p className="text-2xl font-black text-orange-900">${earnings.soccerJobsTotal}</p>
+        </div>
+      </div>
+
+      {/* All-Time Total */}
+      <div className="bg-purple-100 border-2 border-purple-400 rounded-xl p-4">
+        <p className="text-sm font-semibold text-purple-900 mb-1">All-Time Earnings</p>
+        <p className="text-3xl font-black text-purple-900">${earnings.allTimeTotal}</p>
+      </div>
+
+      {/* Paid History */}
+      {earnings.paidHistory.length > 0 && (
+        <div>
+          <h3 className="text-lg font-bold text-gray-800 mb-3">Payment History</h3>
+          <div className="space-y-2">
+            {[...earnings.paidHistory].reverse().map((payment, idx) => (
+              <div key={idx} className="bg-white border-2 border-gray-200 rounded-lg p-3">
+                <div className="flex justify-between items-center">
+                  <p className="font-semibold text-gray-800">Paid on {payment.date}</p>
+                  <p className="font-bold text-emerald-600">${payment.amount}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  // ===== SETTINGS TAB (Add Custom Task) =====
+  const SettingsTab = () => (
+    <div className="space-y-5 pb-24">
+      <div className="bg-gradient-to-r from-slate-500 to-slate-600 rounded-2xl p-5 text-white shadow-lg">
+        <h2 className="text-2xl font-black mb-1">Settings</h2>
+        <p className="text-sm opacity-90">Add custom tasks and manage your app</p>
+      </div>
+
+      {/* Parent Mode Toggle */}
+      <div className="bg-white border-2 border-gray-300 rounded-xl p-4">
+        <div className="flex items-center justify-between">
+          <label className="font-bold text-gray-800">Parent Review Mode</label>
+          <button
+            onClick={() => setIsParentMode(!isParentMode)}
+            className={`px-4 py-2 rounded-lg font-bold transition-all ${
+              isParentMode
+                ? 'bg-indigo-500 text-white'
+                : 'bg-gray-300 text-gray-700'
+            }`}
+          >
+            {isParentMode ? 'ON' : 'OFF'}
+          </button>
+        </div>
+      </div>
+
+      {/* Add Custom Task */}
+      <div>
+        <h3 className="text-lg font-bold text-gray-800 mb-3">Add Custom Task</h3>
+        {!showCustomForm ? (
+          <button
+            onClick={() => setShowCustomForm(true)}
+            className="w-full bg-gradient-to-r from-emerald-400 to-teal-400 text-white font-bold py-3 rounded-lg hover:shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2"
+          >
+            <Plus size={20} />
+            Add Task
+          </button>
+        ) : (
+          <div className="bg-white border-2 border-gray-300 rounded-xl p-4 space-y-3">
+            <input
+              type="text"
+              placeholder="Task name"
+              value={customTask.name}
+              onChange={(e) => setCustomTask({ ...customTask, name: e.target.value })}
+              className="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-emerald-500 focus:outline-none"
+            />
+            <select
+              value={customTask.category}
+              onChange={(e) => setCustomTask({ ...customTask, category: e.target.value })}
+              className="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-emerald-500 focus:outline-none"
+            >
+              <option>House</option>
+              <option>Soccer</option>
+            </select>
+            <input
+              type="number"
+              placeholder="Pay amount ($)"
+              value={customTask.pay}
+              onChange={(e) => setCustomTask({ ...customTask, pay: e.target.value })}
+              className="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-emerald-500 focus:outline-none"
+            />
+            <input
+              type="text"
+              placeholder="Requirement (what needs to be done)"
+              value={customTask.requirement}
+              onChange={(e) => setCustomTask({ ...customTask, requirement: e.target.value })}
+              className="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-emerald-500 focus:outline-none"
+            />
+            <textarea
+              placeholder="Notes (optional)"
+              value={customTask.notes}
+              onChange={(e) => setCustomTask({ ...customTask, notes: e.target.value })}
+              className="w-full border-2 border-gray-300 rounded-lg px-3 py-2 focus:border-emerald-500 focus:outline-none h-20 resize-none"
+            />
+            <div className="flex gap-2">
+              <button
+                onClick={addCustomTask}
+                className="flex-1 bg-emerald-500 text-white font-bold py-2 rounded-lg hover:bg-emerald-600 transition-all"
+              >
+                Save Task
+              </button>
+              <button
+                onClick={() => setShowCustomForm(false)}
+                className="flex-1 bg-gray-300 text-gray-700 font-bold py-2 rounded-lg hover:bg-gray-400 transition-all"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Data Management */}
+      <div className="bg-white border-2 border-gray-300 rounded-xl p-4">
+        <h3 className="font-bold text-gray-800 mb-3">Data Management</h3>
+        <button
+          onClick={() => {
+            if (window.confirm('This will clear ALL data. Are you sure?')) {
+              localStorage.removeItem('summerMoney_tasks');
+              localStorage.removeItem('summerMoney_earnings');
+              localStorage.removeItem('summerMoney_weeklyBonus');
+              window.location.reload();
+            }
+          }}
+          className="w-full bg-red-400 text-white font-bold py-2 rounded-lg hover:bg-red-500 transition-all"
+        >
+          Reset All Data
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 font-sans">
+      {/* Header */}
+      <div className="sticky top-0 z-50 bg-white border-b-2 border-gray-200 shadow-md">
+        <div className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
+          <h1 className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-500">
+            Summer Money
+          </h1>
+          <button
+            onClick={() => setIsParentMode(!isParentMode)}
+            className={`text-xs font-bold px-3 py-1 rounded-full transition-all ${
+              isParentMode
+                ? 'bg-indigo-200 text-indigo-900'
+                : 'bg-gray-200 text-gray-700'
+            }`}
+          >
+            {isParentMode ? '👤 Parent' : '👦 Oliver'}
+          </button>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="max-w-lg mx-auto px-4 pt-4">
+        {!isParentMode && currentTab === 'dashboard' && <DashboardTab />}
+        {!isParentMode && currentTab === 'tasks' && <TasksTab />}
+        {!isParentMode && currentTab === 'ideas' && <IdeasTab />}
+        {!isParentMode && currentTab === 'settings' && <SettingsTab />}
+        {isParentMode && <ParentReviewTab />}
+      </div>
+
+      {/* Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-gray-200 shadow-2xl">
+        <div className="max-w-lg mx-auto px-2 py-2 grid grid-cols-5 gap-1">
+          {!isParentMode ? (
+            <>
+              <NavButton
+                icon={<Home size={20} />}
+                label="Home"
+                active={currentTab === 'dashboard'}
+                onClick={() => setCurrentTab('dashboard')}
+              />
+              <NavButton
+                icon={<CheckCircle size={20} />}
+                label="Tasks"
+                active={currentTab === 'tasks'}
+                onClick={() => setCurrentTab('tasks')}
+              />
+              <NavButton
+                icon={<Lightbulb size={20} />}
+                label="Ideas"
+                active={currentTab === 'ideas'}
+                onClick={() => setCurrentTab('ideas')}
+              />
+              <NavButton
+                icon={<DollarSign size={20} />}
+                label="Earnings"
+                active={currentTab === 'earnings'}
+                onClick={() => setCurrentTab('earnings')}
+              />
+              <NavButton
+                icon={<Settings size={20} />}
+                label="Settings"
+                active={currentTab === 'settings'}
+                onClick={() => setCurrentTab('settings')}
+              />
+            </>
+          ) : (
+            <div className="col-span-5 text-center py-2">
+              <p className="text-xs font-bold text-indigo-700">Parent Review Mode Active</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Show earnings tab when switching back from parent mode */}
+      {!isParentMode && currentTab === 'earnings' && <EarningsTab />}
+    </div>
+  );
+};
+
+const NavButton = ({ icon, label, active, onClick }) => (
+  <button
+    onClick={onClick}
+    className={`py-2 px-1 rounded-lg flex flex-col items-center gap-1 text-xs font-bold transition-all ${
+      active
+        ? 'text-emerald-600 bg-emerald-100'
+        : 'text-gray-600 hover:text-gray-900'
+    }`}
+  >
+    {icon}
+    <span className="leading-tight">{label}</span>
+  </button>
+);
+
+export default SummerMoney;
