@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Summer Money - Family Allowance Tracker</title>
+    <title>Summer Money - Family Allowance & Chores</title>
     <style>
         * {
             margin: 0;
@@ -15,7 +15,8 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
             background: linear-gradient(135deg, #f0f9ff 0%, #f3f4f6 100%);
             min-height: 100vh;
-            padding-bottom: 100px;
+            padding-bottom: 120px;
+            color: #1f2937;
         }
 
         .header {
@@ -23,57 +24,91 @@
             top: 0;
             z-index: 50;
             background: white;
-            border-bottom: 3px solid #e5e7eb;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-bottom: 4px solid #e5e7eb;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
         }
 
+        .header.olli { border-bottom-color: #3b82f6; }
+        .header.jackson { border-bottom-color: #f59e0b; }
+        .header.kennedy { border-bottom-color: #ec4899; }
+        .header.grayson { border-bottom-color: #06b6d4; }
+
         .header-content {
-            max-width: 600px;
+            max-width: 700px;
             margin: 0 auto;
-            padding: 1rem;
+            padding: 1.25rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 1rem;
         }
 
         .header h1 {
-            font-size: 1.5rem;
+            font-size: 1.75rem;
             font-weight: 900;
-            background: linear-gradient(135deg, #10b981, #14b8a6);
+            background: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            white-space: nowrap;
         }
+
+        .active-kid-badge {
+            font-size: 0.875rem;
+            font-weight: 800;
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            background: #f3f4f6;
+            color: #6b7280;
+            transition: all 0.3s ease;
+            min-width: 110px;
+            text-align: center;
+        }
+
+        .active-kid-badge.olli { background: #dbeafe; color: #1e40af; }
+        .active-kid-badge.jackson { background: #fed7aa; color: #92400e; }
+        .active-kid-badge.kennedy { background: #fbcfe8; color: #831843; }
+        .active-kid-badge.grayson { background: #cffafe; color: #164e63; }
 
         .header-buttons {
             display: flex;
             gap: 0.5rem;
+            flex-wrap: wrap;
         }
 
         .header-btn {
             padding: 0.5rem 0.75rem;
-            border: none;
+            border: 2px solid transparent;
             border-radius: 0.5rem;
             font-size: 0.75rem;
-            font-weight: bold;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
+            background: #f3f4f6;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .header-btn:hover {
+            background: #e5e7eb;
         }
 
         .header-btn.active {
-            background: #10b981;
-            color: white;
+            background: white;
+            font-weight: 900;
         }
 
-        .header-btn.inactive {
-            background: #f3f4f6;
-            color: #6b7280;
-        }
+        .header-btn.active.olli { border-color: #3b82f6; color: #3b82f6; }
+        .header-btn.active.jackson { border-color: #f59e0b; color: #f59e0b; }
+        .header-btn.active.kennedy { border-color: #ec4899; color: #ec4899; }
+        .header-btn.active.grayson { border-color: #06b6d4; color: #06b6d4; }
 
         .container {
-            max-width: 600px;
+            max-width: 700px;
             margin: 0 auto;
-            padding: 1rem;
+            padding: 1.25rem;
         }
 
         .tab-content {
@@ -82,35 +117,42 @@
 
         .tab-content.active {
             display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         h2 {
-            font-size: 1.75rem;
+            font-size: 2rem;
             font-weight: 900;
-            color: #111827;
             margin-bottom: 1.5rem;
+            color: #111827;
         }
 
         h3 {
-            font-size: 1.125rem;
-            font-weight: 700;
+            font-size: 1.25rem;
+            font-weight: 800;
             color: #1f2937;
             margin: 1.5rem 0 1rem 0;
         }
 
         .card {
             background: white;
-            border-radius: 1rem;
-            padding: 1.25rem;
+            border-radius: 1.25rem;
+            padding: 1.5rem;
             margin-bottom: 1rem;
             border: 2px solid #e5e7eb;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.12);
             border-color: #d1d5db;
+            transform: translateY(-2px);
         }
 
         .card.gradient-emerald {
@@ -126,7 +168,7 @@
         }
 
         .kid-card {
-            border-left: 4px solid;
+            border-left: 5px solid;
             cursor: pointer;
         }
 
@@ -139,217 +181,293 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.75rem;
+            margin-bottom: 1rem;
         }
 
         .kid-name {
-            font-size: 1.25rem;
-            font-weight: 900;
-        }
-
-        .kid-payout {
             font-size: 1.5rem;
             font-weight: 900;
         }
 
+        .kid-payout {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #10b981;
+        }
+
         .progress-container {
-            margin: 1rem 0;
+            margin: 1.5rem 0;
         }
 
         .progress-label {
             font-size: 0.875rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
             display: flex;
             justify-content: space-between;
+            color: #6b7280;
         }
 
         .progress-bar {
             background: #e5e7eb;
-            height: 10px;
+            height: 12px;
             border-radius: 9999px;
             overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
         }
 
         .progress-fill {
             background: linear-gradient(90deg, #10b981, #14b8a6);
             height: 100%;
-            transition: width 0.3s ease;
+            transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border-radius: 9999px;
         }
 
         .stat-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
+            gap: 1rem;
             margin: 1rem 0;
         }
 
         .stat-box {
-            background: #f9fafb;
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
             border: 2px solid #e5e7eb;
-            border-radius: 0.75rem;
-            padding: 0.75rem;
+            border-radius: 0.875rem;
+            padding: 1rem;
             text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-box:hover {
+            border-color: #d1d5db;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
 
         .stat-label {
             font-size: 0.75rem;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
-            color: #6b7280;
-            margin-bottom: 0.25rem;
+            color: #9ca3af;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
         }
 
         .stat-value {
-            font-size: 1.5rem;
+            font-size: 2rem;
             font-weight: 900;
             color: #1f2937;
         }
 
         .task-item {
-            background: #f9fafb;
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
             border: 2px solid #e5e7eb;
-            border-radius: 0.75rem;
-            padding: 1rem;
-            margin-bottom: 0.75rem;
-            transition: all 0.2s;
+            border-radius: 0.875rem;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .task-item.completed {
-            background: #d1fae5;
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
             border-color: #10b981;
-            opacity: 0.7;
+            opacity: 0.8;
         }
 
         .task-item.approved {
-            background: #dbeafe;
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
             border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
         }
 
         .task-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
+            gap: 1rem;
         }
 
         .task-name {
-            font-weight: 700;
+            font-weight: 800;
             color: #1f2937;
             flex: 1;
+            font-size: 1.05rem;
         }
 
         .task-pay {
-            background: #10b981;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
-            font-weight: bold;
-            font-size: 0.875rem;
-            padding: 0.25rem 0.75rem;
+            font-weight: 900;
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
             border-radius: 9999px;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
         .task-requirement {
             font-size: 0.875rem;
             color: #6b7280;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
         }
 
         .task-status {
             display: inline-block;
             background: #f3f4f6;
             color: #6b7280;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 0.75rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 0.25rem;
-            margin-top: 0.5rem;
+            padding: 0.375rem 0.875rem;
+            border-radius: 0.375rem;
+            margin-top: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            background: linear-gradient(135deg, #fcd34d 0%, #fbbf24 100%);
+            color: #78350f;
+            font-weight: 800;
+            font-size: 0.75rem;
+            padding: 0.5rem 0.875rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(252, 211, 77, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .checklist {
-            background: #f9fafb;
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
             border: 2px solid #e5e7eb;
-            border-radius: 0.75rem;
-            padding: 1rem;
+            border-radius: 0.875rem;
+            padding: 1.25rem;
             margin: 1rem 0;
         }
 
         .checklist-item {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 0.75rem;
+            gap: 0.875rem;
+            margin-bottom: 1rem;
             cursor: pointer;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
         }
 
         .checklist-item:last-child {
             margin-bottom: 0;
         }
 
+        .checklist-item:hover {
+            background: rgba(16, 185, 129, 0.1);
+        }
+
         .checkbox {
-            width: 24px;
-            height: 24px;
-            border: 2px solid #d1d5db;
-            border-radius: 0.375rem;
+            width: 28px;
+            height: 28px;
+            border: 2.5px solid #d1d5db;
+            border-radius: 0.5rem;
             cursor: pointer;
             flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            background: white;
         }
 
         .checkbox.checked {
-            background: #10b981;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             border-color: #059669;
             color: white;
-            font-weight: bold;
+            font-weight: 900;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
         .checkbox-label {
             flex: 1;
             cursor: pointer;
+            font-weight: 600;
+            color: #1f2937;
         }
 
         button {
-            background: #10b981;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
             border: none;
-            border-radius: 0.75rem;
-            font-weight: 700;
-            padding: 0.75rem 1.5rem;
+            border-radius: 0.875rem;
+            font-weight: 800;
+            padding: 0.875rem 1.75rem;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             font-size: 1rem;
-        }
-
-        button:hover {
-            background: #059669;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+        }
+
         button:active {
-            transform: scale(0.98);
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .btn-secondary {
-            background: #6b7280;
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
         }
 
         .btn-secondary:hover {
-            background: #4b5563;
+            box-shadow: 0 8px 24px rgba(107, 114, 128, 0.4);
         }
 
         .btn-danger {
-            background: #ef4444;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
 
         .btn-danger:hover {
-            background: #dc2626;
+            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
         }
 
         .btn-block {
             width: 100%;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
         }
 
         .navbar {
@@ -358,38 +476,45 @@
             left: 0;
             right: 0;
             background: white;
-            border-top: 3px solid #e5e7eb;
-            box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+            border-top: 4px solid #e5e7eb;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
         }
 
         .navbar-content {
-            max-width: 600px;
+            max-width: 700px;
             margin: 0 auto;
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 0.25rem;
-            padding: 0.5rem;
+            padding: 0.75rem;
         }
 
         .nav-btn {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.25rem;
-            padding: 0.5rem;
+            gap: 0.375rem;
+            padding: 0.625rem 0.5rem;
             border: none;
             background: transparent;
             cursor: pointer;
             color: #9ca3af;
             font-size: 0.625rem;
-            font-weight: 700;
-            transition: all 0.2s;
+            font-weight: 800;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-btn:hover {
+            color: #6b7280;
         }
 
         .nav-btn.active {
             color: #10b981;
-            background: #d1fae5;
-            border-radius: 0.75rem;
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border-radius: 0.875rem;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
         }
 
         .nav-emoji {
@@ -398,70 +523,19 @@
 
         input, select, textarea {
             width: 100%;
-            padding: 0.75rem;
+            padding: 0.875rem;
             border: 2px solid #d1d5db;
-            border-radius: 0.5rem;
+            border-radius: 0.75rem;
             font-family: inherit;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.875rem;
             font-size: 1rem;
+            transition: all 0.2s ease;
         }
 
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: #10b981;
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
-        }
-
-        .badge {
-            display: inline-block;
-            background: #fcd34d;
-            color: #78350f;
-            font-weight: 700;
-            font-size: 0.75rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem;
-            margin-right: 0.25rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .leaderboard-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem;
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .leaderboard-rank {
-            font-size: 1.5rem;
-            font-weight: 900;
-            color: #10b981;
-            width: 40px;
-        }
-
-        .leaderboard-name {
-            flex: 1;
-            font-weight: 700;
-        }
-
-        .leaderboard-value {
-            font-size: 1.25rem;
-            font-weight: 900;
-            color: #1f2937;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 2rem 1rem;
-            color: #6b7280;
-        }
-
-        .empty-emoji {
-            font-size: 3rem;
-            margin-bottom: 0.5rem;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
         }
 
         .pin-modal {
@@ -470,20 +544,33 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.6);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 100;
+            backdrop-filter: blur(4px);
         }
 
         .pin-modal-content {
             background: white;
-            border-radius: 1rem;
-            padding: 2rem;
-            max-width: 400px;
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            max-width: 420px;
             width: 90%;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .pin-modal-content h2 {
@@ -494,64 +581,146 @@
         .pin-pad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 0.5rem;
-            margin: 1.5rem 0;
+            gap: 0.75rem;
+            margin: 2rem 0;
         }
 
         .pin-button {
-            padding: 1.5rem;
-            font-size: 1.5rem;
+            padding: 1.75rem;
+            font-size: 1.75rem;
             font-weight: 900;
         }
 
         .pin-display {
             text-align: center;
-            font-size: 2rem;
-            letter-spacing: 0.5rem;
-            margin-bottom: 1rem;
-            height: 40px;
+            font-size: 2.5rem;
+            letter-spacing: 0.75rem;
+            margin-bottom: 1.5rem;
+            height: 50px;
+            color: #10b981;
+            font-weight: 900;
         }
 
         .countdown {
             text-align: center;
-            font-size: 1rem;
+            font-size: 1.125rem;
             color: #10b981;
-            font-weight: 700;
-            margin: 1rem 0;
+            font-weight: 800;
+            margin: 1.5rem 0;
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            padding: 1rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
         }
 
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            border: 2px solid #e5e7eb;
+            border-radius: 0.875rem;
+            margin-bottom: 0.875rem;
+            transition: all 0.3s ease;
+        }
+
+        .leaderboard-item:hover {
+            border-color: #d1d5db;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+
+        .leaderboard-rank {
+            font-size: 1.75rem;
+            font-weight: 900;
+            color: #10b981;
+            width: 50px;
+        }
+
+        .leaderboard-name {
+            flex: 1;
+            font-weight: 800;
+            font-size: 1.05rem;
+        }
+
+        .leaderboard-value {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #1f2937;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: #6b7280;
+        }
+
+        .empty-emoji {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .celebration {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 1000;
+            animation: celebrate 2s ease-out forwards;
+        }
+
+        @keyframes celebrate {
+            0% {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -200px) scale(1.5);
             }
         }
 
-        .card {
-            animation: slideIn 0.3s ease;
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #10b981;
+            pointer-events: none;
+            z-index: 999;
+            animation: confetti-fall 3s ease-out forwards;
         }
 
-        @media (max-width: 600px) {
-            body { padding-bottom: 120px; }
-            h2 { font-size: 1.5rem; }
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(500px) translateX(var(--tx));
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 700px) {
+            body { padding-bottom: 140px; }
+            h2 { font-size: 1.75rem; }
+            .header-content { flex-direction: column; gap: 0.75rem; }
         }
     </style>
 </head>
 <body>
     <!-- Header -->
-    <div class="header">
+    <div class="header" id="mainHeader">
         <div class="header-content">
             <h1>💰 Summer Money</h1>
+            <div class="active-kid-badge" id="activeKidDisplay">Olli</div>
             <div class="header-buttons">
-                <button class="header-btn active" onclick="toggleKidMode('olli')">Olli</button>
-                <button class="header-btn" onclick="toggleKidMode('jackson')">Jackson</button>
-                <button class="header-btn" onclick="toggleKidMode('kennedy')">Kennedy</button>
-                <button class="header-btn" onclick="toggleKidMode('grayson')">Grayson</button>
-                <button class="header-btn inactive" onclick="enterParentMode()">👤</button>
+                <button class="header-btn active olli" onclick="toggleKidMode('olli')">Olli</button>
+                <button class="header-btn jackson" onclick="toggleKidMode('jackson')">Jackson</button>
+                <button class="header-btn kennedy" onclick="toggleKidMode('kennedy')">Kennedy</button>
+                <button class="header-btn grayson" onclick="toggleKidMode('grayson')">Grayson</button>
+                <button class="header-btn" onclick="enterParentMode()" title="Parent Access">👤</button>
             </div>
         </div>
     </div>
@@ -560,7 +729,7 @@
     <div id="pinModal" class="pin-modal" style="display: none;">
         <div class="pin-modal-content">
             <h2>Parent Access</h2>
-            <p style="text-align: center; color: #6b7280; margin-bottom: 1rem;">Enter PIN</p>
+            <p style="text-align: center; color: #6b7280; margin-bottom: 1.5rem; font-weight: 600;">Enter PIN (1234)</p>
             <div class="pin-display" id="pinDisplay"></div>
             <div class="pin-pad">
                 <button class="pin-button" onclick="addPin('1')">1</button>
@@ -588,7 +757,7 @@
             <div id="dashboard-content"></div>
         </div>
 
-        <!-- Kids -->
+        <!-- Kids Profiles -->
         <div id="tab-kids" class="tab-content">
             <h2>Kids</h2>
             <div id="kids-content"></div>
@@ -630,7 +799,7 @@
         <div class="navbar-content">
             <button class="nav-btn active" onclick="switchTab('dashboard')">
                 <span class="nav-emoji">📊</span>
-                <span>Dashboard</span>
+                <span>Home</span>
             </button>
             <button class="nav-btn" onclick="switchTab('kids')">
                 <span class="nav-emoji">👥</span>
@@ -659,82 +828,49 @@
         let enteredPin = '';
 
         const kids = ['olli', 'jackson', 'kennedy', 'grayson'];
-        const kidColors = { olli: '#3b82f6', jackson: '#f59e0b', kennedy: '#ec4899', grayson: '#06b6d4' };
         const kidEmojis = { olli: '⚽', jackson: '🏃', kennedy: '💪', grayson: '🧘' };
+        const kidColors = { olli: '#3b82f6', jackson: '#f59e0b', kennedy: '#ec4899', grayson: '#06b6d4' };
 
-        // Initialize data
         let data = JSON.parse(localStorage.getItem('summerMoneyData')) || initializeData();
 
         function initializeData() {
             return {
                 kids: {
-                    olli: { name: 'Olli', color: '#3b82f6', earned: 0, pending: 0, approved: 0, paidHistory: [], records: { juggling: 0 }, badges: [], streak: 0, goal: 40 },
-                    jackson: { name: 'Jackson', color: '#f59e0b', earned: 0, pending: 0, approved: 0, paidHistory: [], records: { juggling: 0 }, badges: [], streak: 0, goal: 40 },
-                    kennedy: { name: 'Kennedy', color: '#ec4899', earned: 0, pending: 0, approved: 0, paidHistory: [], records: { juggling: 0 }, badges: [], streak: 0, goal: 40 },
-                    grayson: { name: 'Grayson', color: '#06b6d4', earned: 0, pending: 0, approved: 0, paidHistory: [], records: { juggling: 0 }, badges: [], streak: 0, goal: 40 }
+                    olli: { name: 'Olli', earned: 0, pending: 0, approved: 0, paidHistory: [], badges: [], athleticWeek: 0, goal: 50 },
+                    jackson: { name: 'Jackson', earned: 0, pending: 0, approved: 0, paidHistory: [], badges: [], athleticWeek: 0, goal: 50 },
+                    kennedy: { name: 'Kennedy', earned: 0, pending: 0, approved: 0, paidHistory: [], badges: [], athleticWeek: 0, goal: 50 },
+                    grayson: { name: 'Grayson', earned: 0, pending: 0, approved: 0, paidHistory: [], badges: [], athleticWeek: 0, goal: 50 }
                 },
-                tasks: {
-                    olli: [], jackson: [], kennedy: [], grayson: []
-                },
-                lastPayout: null,
-                weeklyAthletic: { olli: 0, jackson: 0, kennedy: 0, grayson: 0 }
+                tasks: { olli: [], jackson: [], kennedy: [], grayson: [] },
+                lastPayout: null
             };
         }
 
         // ===== TASK DEFINITIONS =====
         const taskTemplates = {
-            houseSm: [
-                { name: 'Take out trash', category: '🏠 House', pay: 2, requirement: 'Trash bins to curb', time: '10 min', difficulty: 'Easy' },
-                { name: 'Take recycling out', category: '🏠 House', pay: 2, requirement: 'Recycling bin to curb', time: '10 min', difficulty: 'Easy' },
-                { name: 'Wipe bathroom counter and sink', category: '🚿 Bathroom', pay: 2, requirement: 'Counter and sink clean', time: '10 min', difficulty: 'Easy' },
-                { name: 'Sweep kitchen', category: '🧹 Cleaning', pay: 2, requirement: 'Entire kitchen floor', time: '15 min', difficulty: 'Easy' },
-                { name: 'Vacuum one room', category: '🧹 Cleaning', pay: 3, requirement: 'Room completely vacuumed', time: '20 min', difficulty: 'Easy' },
-                { name: 'Fold a basket of laundry', category: '🧺 Laundry', pay: 1, requirement: 'All items folded neatly', time: '20 min', difficulty: 'Easy' },
-                { name: 'Empty dishwasher', category: '🏠 House', pay: 2, requirement: 'All dishes put away', time: '10 min', difficulty: 'Easy' },
-                { name: 'Wipe kitchen table and counters', category: '🧹 Cleaning', pay: 2, requirement: 'Clean and wiped down', time: '15 min', difficulty: 'Easy' },
-                { name: 'Pick up living room', category: '🏠 House', pay: 2, requirement: 'Tidy and organized', time: '15 min', difficulty: 'Easy' },
-                { name: 'Poop duty around the entire house', category: '🐶 Poop Duty', pay: 2, requirement: 'All areas checked and cleaned', time: '15 min', difficulty: 'Easy' }
+            house: [
+                { name: 'Take out trash', category: '🏠 House', pay: 2, requirement: 'Trash bins to curb', time: '10 min' },
+                { name: 'Take recycling out', category: '🏠 House', pay: 2, requirement: 'Recycling bin to curb', time: '10 min' },
+                { name: 'Wipe bathroom counter', category: '🚿 Bathroom', pay: 2, requirement: 'Counter and sink clean', time: '10 min' },
+                { name: 'Sweep kitchen', category: '🧹 Cleaning', pay: 2, requirement: 'Entire floor', time: '15 min' },
+                { name: 'Vacuum one room', category: '🧹 Cleaning', pay: 3, requirement: 'Room completely vacuumed', time: '20 min' },
+                { name: 'Fold laundry', category: '🧺 Laundry', pay: 1, requirement: 'All items folded', time: '20 min' },
+                { name: 'Empty dishwasher', category: '🏠 House', pay: 2, requirement: 'All dishes away', time: '10 min' },
+                { name: 'Poop duty', category: '🐶 Poop Duty', pay: 2, requirement: 'All areas checked', time: '15 min' },
+                { name: 'Clean bedroom', category: '🛏 Bedroom', pay: 5, requirement: 'Full checklist complete', time: '45 min', checklist: ['Floor picked up', 'Bed made', 'Laundry put away', 'Vacuum completed'] },
+                { name: 'Clean bathroom', category: '🚿 Bathroom', pay: 5, requirement: 'Full checklist complete', time: '45 min', checklist: ['Sink wiped', 'Counter cleaned', 'Mirror cleaned', 'Toilet cleaned', 'Trash emptied', 'Floor swept'] }
             ],
-            houseMd: [
-                { name: 'Clean bedroom fully (checklist)', category: '🛏 Bedroom', pay: 5, requirement: 'Floor, bed, laundry, dust, vacuum', time: '45 min', difficulty: 'Medium', checklist: ['Floor picked up', 'Bed made', 'Laundry put away', 'Wood dusted', 'Vacuum completed'] },
-                { name: 'Vacuum upstairs or downstairs', category: '🧹 Cleaning', pay: 5, requirement: 'Entire level vacuumed', time: '30 min', difficulty: 'Medium' },
-                { name: 'Clean bathroom (checklist)', category: '🚿 Bathroom', pay: 5, requirement: 'Sink, counter, mirror, toilet, trash, floor', time: '45 min', difficulty: 'Medium', checklist: ['Sink wiped', 'Counter cleaned', 'Mirror cleaned', 'Toilet cleaned', 'Trash emptied', 'Floor picked up', 'Floor vacuumed/swept', 'Towels picked up'] },
-                { name: 'Help carry groceries and put them away', category: '🏠 House', pay: 5, requirement: 'Everything unpacked and organized', time: '20 min', difficulty: 'Medium' },
-                { name: 'Pull weeds for 20 minutes', category: '🌿 Yard Work', pay: 5, requirement: '20 min focused weeding', time: '20 min', difficulty: 'Medium' },
-                { name: 'Clean out car trash and wipe surfaces', category: '🏠 House', pay: 5, requirement: 'Interior cleaned and wiped', time: '30 min', difficulty: 'Medium' }
-            ],
-            houseLg: [
-                { name: 'Wash car exterior', category: '🏠 House', pay: 10, requirement: 'Washed and dried', time: '60 min', difficulty: 'Hard', variable: { min: 10, max: 10 } },
-                { name: 'Deep clean bedroom (checklist)', category: '🛏 Bedroom', pay: 10, requirement: 'Full deep clean', time: '90 min', difficulty: 'Hard', checklist: ['Everything organized', 'Dusted completely', 'Floor swept and vacuumed', 'Bed linens fresh'] },
-                { name: 'Organize closet or drawers', category: '🛏 Bedroom', pay: 10, requirement: 'Neatly folded and organized', time: '60 min', difficulty: 'Hard' },
-                { name: 'Yard work (45-60 min)', category: '🌿 Yard Work', pay: 10, requirement: '45-60 minutes of focused work', time: '60 min', difficulty: 'Hard', variable: { min: 10, max: 15 } },
-                { name: 'Clean garage area with direction', category: '🌿 Yard Work', pay: 10, requirement: 'Organized and swept', time: '90 min', difficulty: 'Hard', variable: { min: 10, max: 15 } }
-            ],
-            athleticSm: [
-                { name: 'Juggling practice (15 min)', category: '⚽ Ball Skills', pay: 2, requirement: '15 minutes focused', time: '15 min', difficulty: 'Easy', metric: true },
-                { name: 'Ball touches (15 min)', category: '⚽ Ball Skills', pay: 2, requirement: '15 minutes of touches', time: '15 min', difficulty: 'Easy' },
-                { name: 'Stretching routine (10 min)', category: '💪 Strength', pay: 2, requirement: 'Full body stretch', time: '10 min', difficulty: 'Easy' },
-                { name: 'Pushups (3x10)', category: '💪 Strength', pay: 2, requirement: 'Complete 3 sets of 10', time: '15 min', difficulty: 'Easy' },
-                { name: 'Sit-ups or crunches (3x15)', category: '💪 Strength', pay: 2, requirement: 'Complete 3 sets of 15', time: '15 min', difficulty: 'Easy' },
-                { name: 'Plank work (3x30 sec)', category: '💪 Strength', pay: 2, requirement: 'Hold 3 rounds of 30 sec', time: '10 min', difficulty: 'Easy' },
-                { name: 'Agility footwork (10 min)', category: '🏃 Fitness', pay: 2, requirement: '10 minutes focused', time: '10 min', difficulty: 'Easy' },
-                { name: 'Wall passes (100 touches)', category: '⚽ Ball Skills', pay: 2, requirement: '100 touches against wall', time: '15 min', difficulty: 'Easy' }
-            ],
-            athleticMd: [
-                { name: '2 loops run', category: '🏃 Fitness', pay: 4, requirement: 'Around pond 2 times', time: '20 min', difficulty: 'Medium' },
-                { name: '1 mile easy run', category: '🏃 Fitness', pay: 5, requirement: '1 mile at easy pace', time: '15 min', difficulty: 'Medium' },
-                { name: 'Sprint workout (8-10 sprints)', category: '🏃 Fitness', pay: 5, requirement: 'Explosive short sprints', time: '20 min', difficulty: 'Medium' },
-                { name: 'Fitness circuit (20 min)', category: '🏃 Fitness', pay: 5, requirement: '20 minutes mixed exercises', time: '20 min', difficulty: 'Medium' },
-                { name: 'Juggling practice (30 min)', category: '⚽ Ball Skills', pay: 5, requirement: '30 minutes focused', time: '30 min', difficulty: 'Medium', metric: true },
-                { name: 'Footwork/agility ladder (20 min)', category: '⚽ Ball Skills', pay: 5, requirement: 'Ladder drills for 20 min', time: '20 min', difficulty: 'Medium' },
-                { name: 'Cone dribbling workout (20 min)', category: '⚽ Ball Skills', pay: 5, requirement: 'Dribble courses for 20 min', time: '20 min', difficulty: 'Medium' },
-                { name: 'Shooting practice (30 min)', category: '⚽ Ball Skills', pay: 5, requirement: '30 minutes shooting', time: '30 min', difficulty: 'Medium' }
-            ],
-            athleticLg: [
-                { name: 'Full athletic workout (45 min)', category: '🏃 Fitness', pay: 10, requirement: 'Comprehensive 45 min session', time: '45 min', difficulty: 'Hard' },
-                { name: 'Run + strength combo', category: '🏃 Fitness', pay: 10, requirement: '1 mi run + pushups + sit-ups + planks', time: '45 min', difficulty: 'Hard' },
-                { name: 'Ball control workout (45 min)', category: '⚽ Ball Skills', pay: 10, requirement: 'Juggling, dribbling, passing', time: '45 min', difficulty: 'Hard', metric: true },
-                { name: 'Game-day prep workout', category: '🏃 Fitness', pay: 10, requirement: 'Stretching, light run, touches, core', time: '40 min', difficulty: 'Hard' }
+            athletic: [
+                { name: 'Juggling (15 min)', category: '⚽ Ball Skills', pay: 2, requirement: '15 min focused', time: '15 min', isAthletic: true },
+                { name: 'Pushups (3×10)', category: '💪 Strength', pay: 2, requirement: '3 sets of 10', time: '15 min', isAthletic: true },
+                { name: 'Stretching (10 min)', category: '💪 Strength', pay: 2, requirement: 'Full body stretch', time: '10 min', isAthletic: true },
+                { name: 'Wall passes (100 touches)', category: '⚽ Ball Skills', pay: 2, requirement: '100 touches', time: '15 min', isAthletic: true },
+                { name: '2 loops run', category: '🏃 Fitness', pay: 4, requirement: 'Around pond 2x', time: '20 min', isAthletic: true },
+                { name: '1 mile easy run', category: '🏃 Fitness', pay: 5, requirement: '1 mile easy', time: '15 min', isAthletic: true },
+                { name: 'Sprint workout', category: '🏃 Fitness', pay: 5, requirement: '8-10 short sprints', time: '20 min', isAthletic: true },
+                { name: 'Fitness circuit (20 min)', category: '🏃 Fitness', pay: 5, requirement: '20 min mixed', time: '20 min', isAthletic: true },
+                { name: 'Full workout (45 min)', category: '🏃 Fitness', pay: 10, requirement: 'Comprehensive session', time: '45 min', isAthletic: true },
+                { name: 'Ball control (45 min)', category: '⚽ Ball Skills', pay: 10, requirement: 'Juggling, dribbling, passing', time: '45 min', isAthletic: true }
             ]
         };
 
@@ -753,8 +889,15 @@
 
         function toggleKidMode(kid) {
             currentKid = kid;
-            document.querySelectorAll('.header-btn.active').forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
+            document.querySelectorAll('.header-btn').forEach(b => b.classList.remove('active', 'olli', 'jackson', 'kennedy', 'grayson'));
+            const btn = document.querySelector(`button[onclick="toggleKidMode('${kid}')"]`);
+            btn.classList.add('active', kid);
+            
+            const display = document.getElementById('activeKidDisplay');
+            display.textContent = data.kids[kid].name;
+            display.className = `active-kid-badge ${kid}`;
+            
+            document.getElementById('mainHeader').className = `header ${kid}`;
             parentMode = false;
             render();
         }
@@ -784,7 +927,7 @@
                 switchTab('review');
                 render();
             } else {
-                alert('Incorrect PIN');
+                alert('Incorrect PIN. Try 1234');
                 clearPin();
             }
         }
@@ -793,6 +936,28 @@
             enteredPin = '';
             document.getElementById('pinDisplay').textContent = '';
             document.getElementById('pinModal').style.display = 'none';
+        }
+
+        // ===== CELEBRATION & ANIMATIONS =====
+        function celebrate() {
+            const emoji = ['🎉', '🌟', '✨', '🎊', '💚', '⭐'];
+            const celebration = document.createElement('div');
+            celebration.className = 'celebration';
+            celebration.textContent = emoji[Math.floor(Math.random() * emoji.length)];
+            celebration.style.fontSize = '4rem';
+            document.body.appendChild(celebration);
+            setTimeout(() => celebration.remove(), 2000);
+
+            for (let i = 0; i < 15; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = '50%';
+                confetti.style.top = '50%';
+                confetti.style.background = ['#10b981', '#14b8a6', '#fbbf24', '#ec4899', '#3b82f6'][Math.floor(Math.random() * 5)];
+                confetti.style.setProperty('--tx', (Math.random() - 0.5) * 400 + 'px');
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 3000);
+            }
         }
 
         // ===== RENDERING =====
@@ -811,48 +976,28 @@
 
         function renderDashboard() {
             const content = document.getElementById('dashboard-content');
-            const sundayDate = getNextSunday();
-            const daysUntilPayout = getDaysUntilSunday();
+            const daysLeft = getDaysUntilSunday();
             
-            let html = `<div class="countdown">📅 Next Payout: ${daysUntilPayout} days</div>`;
-            
-            html += `<div class="card gradient-emerald">
-                <div style="font-size: 1.5rem; font-weight: 900; margin-bottom: 0.5rem;">This Week's Total</div>
-                <div style="font-size: 2.5rem; font-weight: 900;">$${getTotalWeeklyEstimated()}</div>
-            </div>`;
+            let html = `<div class="countdown">📅 ${daysLeft} day${daysLeft !== 1 ? 's' : ''} until Sunday payout</div>`;
+            html += `<div class="card gradient-emerald"><div style="font-size: 1.25rem; font-weight: 900; margin-bottom: 0.5rem;">This Week's Total</div><div style="font-size: 2.75rem; font-weight: 900;">$${getTotalWeekly()}</div></div>`;
 
             kids.forEach(kid => {
-                const kidData = data.kids[kid];
                 const tasks = data.tasks[kid];
-                const athleticCount = tasks.filter(t => t.approved && t.completed && t.category.includes('Ball Skills') || t.category.includes('Fitness')).length;
-                const progressPercent = Math.min((athleticCount / 10) * 100, 100);
+                const athleticDone = tasks.filter(t => t.approved && t.isAthletic).length;
+                const athleticPercent = Math.min((athleticDone / 10) * 100, 100);
                 
                 html += `<div class="card kid-card ${kid}" onclick="toggleKidMode('${kid}')">
                     <div class="kid-header">
-                        <div>
-                            <div class="kid-name">${kidEmojis[kid]} ${kidData.name}</div>
-                            <div style="font-size: 0.875rem; color: #6b7280;">Estimated Payout</div>
-                        </div>
-                        <div class="kid-payout">$${kidData.pending}</div>
+                        <div><div class="kid-name">${kidEmojis[kid]} ${data.kids[kid].name}</div><div style="font-size: 0.875rem; color: #6b7280;">Estimated Payout</div></div>
+                        <div class="kid-payout">$${data.kids[kid].pending}</div>
                     </div>
                     <div class="stat-grid">
-                        <div class="stat-box">
-                            <div class="stat-label">Pending</div>
-                            <div class="stat-value">${tasks.filter(t => t.completed && !t.approved).length}</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-label">Approved</div>
-                            <div class="stat-value">${tasks.filter(t => t.approved && !t.paid).length}</div>
-                        </div>
+                        <div class="stat-box"><div class="stat-label">Pending</div><div class="stat-value">${tasks.filter(t => t.completed && !t.approved).length}</div></div>
+                        <div class="stat-box"><div class="stat-label">Approved</div><div class="stat-value">${tasks.filter(t => t.approved && !t.paid).length}</div></div>
                     </div>
                     <div class="progress-container">
-                        <div class="progress-label">
-                            <span>Daily Athletic (${athleticCount}/10 for $10 bonus)</span>
-                            <span>${athleticCount}/10</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${progressPercent}%;"></div>
-                        </div>
+                        <div class="progress-label"><span>🏃 Daily Athletics (${athleticDone}/10 = $10 Bonus)</span><span>${athleticDone}/10</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: ${athleticPercent}%;"></div></div>
                     </div>
                 </div>`;
             });
@@ -867,43 +1012,23 @@
             kids.forEach(kid => {
                 const kidData = data.kids[kid];
                 const tasks = data.tasks[kid];
-                const completed = tasks.filter(t => t.completed).length;
-                const approved = tasks.filter(t => t.approved).length;
+                const goalPercent = Math.min((kidData.earned / kidData.goal) * 100, 100);
                 
                 html += `<div class="card kid-card ${kid}" onclick="toggleKidMode('${kid}')">
                     <div class="kid-header">
-                        <div>
-                            <div class="kid-name">${kidEmojis[kid]} ${kidData.name}</div>
-                            <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.5rem;">Goal: $${kidData.goal}</div>
-                        </div>
+                        <div><div class="kid-name">${kidEmojis[kid]} ${kidData.name}</div><div style="font-size: 0.875rem; color: #6b7280; margin: 0.5rem 0;">Goal: $${kidData.goal}</div></div>
                         <div class="kid-payout">$${kidData.earned}</div>
                     </div>
                     <div class="progress-container">
-                        <div class="progress-label">
-                            <span>All-Time Progress</span>
-                            <span>$${kidData.earned} / $${kidData.goal}</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${Math.min((kidData.earned / kidData.goal) * 100, 100)}%;"></div>
-                        </div>
+                        <div class="progress-label"><span>All-Time Progress</span><span>$${kidData.earned} / $${kidData.goal}</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: ${goalPercent}%;"></div></div>
                     </div>
+                    ${kidData.badges.length > 0 ? `<div class="badge-list">${kidData.badges.slice(0, 3).map(b => `<div class="badge">🏆 ${b}</div>`).join('')}</div>` : ''}
                     <div class="stat-grid">
-                        <div class="stat-box">
-                            <div class="stat-label">Completed</div>
-                            <div class="stat-value">${completed}</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-label">Approved</div>
-                            <div class="stat-value">${approved}</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-label">Pending</div>
-                            <div class="stat-value">${tasks.filter(t => t.completed && !t.approved).length}</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-label">Streak</div>
-                            <div class="stat-value">🔥 ${kidData.streak}</div>
-                        </div>
+                        <div class="stat-box"><div class="stat-label">Completed</div><div class="stat-value">${tasks.filter(t => t.completed).length}</div></div>
+                        <div class="stat-box"><div class="stat-label">Approved</div><div class="stat-value">${tasks.filter(t => t.approved).length}</div></div>
+                        <div class="stat-box"><div class="stat-label">Earned</div><div class="stat-value">$${kidData.earned}</div></div>
+                        <div class="stat-box"><div class="stat-label">Goal %</div><div class="stat-value">${Math.round(goalPercent)}%</div></div>
                     </div>
                 </div>`;
             });
@@ -914,10 +1039,10 @@
         function renderTasks() {
             const content = document.getElementById('tasks-content');
             const tasks = data.tasks[currentKid];
-            let html = `<h3 style="margin-top: 0;">Your Tasks</h3>`;
+            let html = '';
 
             if (tasks.length === 0) {
-                html += '<div class="empty-state"><div class="empty-emoji">📋</div><p>No tasks yet. Pick from Ideas!</p></div>';
+                html = '<div class="empty-state"><div class="empty-emoji">📋</div><p style="font-size: 1.125rem; font-weight: 700; margin-top: 1rem;">No tasks yet. Check the Ideas tab!</p></div>';
             } else {
                 const byCategory = {};
                 tasks.forEach(t => {
@@ -928,17 +1053,12 @@
                 Object.keys(byCategory).forEach(cat => {
                     html += `<h3>${cat}</h3>`;
                     byCategory[cat].forEach(task => {
-                        const status = task.paid ? 'Paid ✓' : task.approved ? 'Approved ✓' : task.completed ? 'Pending' : 'Ready';
+                        const status = task.paid ? '✅ Paid' : task.approved ? '✅ Approved' : task.completed ? '⏳ Pending' : '📋 Ready';
                         html += `<div class="task-item ${task.completed ? 'completed' : ''} ${task.approved ? 'approved' : ''}">
-                            <div class="task-header">
-                                <div class="task-name">${task.name}</div>
-                                <div class="task-pay">$${task.pay}</div>
-                            </div>
+                            <div class="task-header"><div class="task-name">${task.name}</div><div class="task-pay">$${task.pay}</div></div>
                             <div class="task-requirement">${task.requirement}</div>
-                            ${task.checklist ? `<button class="btn-secondary" onclick="editTask('${currentKid}', ${task.id})">Check Progress</button>` : ''}
-                            <button ${task.completed || task.paid ? 'disabled' : ''} onclick="toggleTask('${currentKid}', ${task.id}, true)" style="margin-top: 0.5rem;">
-                                ${task.completed ? '✓ Submitted' : 'Mark Done'}
-                            </button>
+                            ${task.checklist && !task.completed ? `<div class="checklist">${task.checklist.map((item, i) => `<div class="checklist-item" onclick="toggleChecklistItem(event, '${currentKid}', ${task.id}, ${i})"><div class="checkbox ${(task.checklistProgress && task.checklistProgress[i]) ? 'checked' : ''}">✓</div><div class="checkbox-label">${item}</div></div>`).join('')}</div>` : ''}
+                            <button ${task.completed || task.paid ? 'disabled' : ''} onclick="completeTask('${currentKid}', ${task.id})" style="margin-top: 0.75rem;">${task.completed ? '✓ Submitted' : 'Mark Done'}</button>
                             <span class="task-status">${status}</span>
                         </div>`;
                     });
@@ -950,27 +1070,29 @@
 
         function renderIdeas() {
             const content = document.getElementById('ideas-content');
-            let html = '<button class="btn-block" onclick="randomTask(currentKid)" style="background: #ec4899; margin-bottom: 1.5rem;">🎲 Surprise Me!</button>';
+            let html = '<button class="btn-block" onclick="randomTask(currentKid)" style="background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); margin-bottom: 1.5rem; font-size: 1.125rem; padding: 1.25rem;">🎲 Surprise Me!</button>';
 
-            const categories = [
-                { name: 'Quick Money', tasks: [...taskTemplates.houseSm.slice(0, 5)] },
-                { name: 'Bigger Money', tasks: [...taskTemplates.houseMd.slice(0, 3)] },
-                { name: 'Athletic - Daily', tasks: [...taskTemplates.athleticSm.slice(0, 5)] },
-                { name: 'Athletic - Longer', tasks: [...taskTemplates.athleticMd.slice(0, 4)] }
-            ];
-
-            categories.forEach(cat => {
-                html += `<h3>${cat.name}</h3>`;
-                html += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">';
-                cat.tasks.forEach(task => {
-                    html += `<div class="card" style="padding: 0.75rem; cursor: pointer;" onclick="addTask('${currentKid}', '${task.name.replace(/'/g, '\\\'')}', '${task.category.replace(/'/g, '\\\'')}', ${task.pay}, '${task.requirement.replace(/'/g, '\\\'')}')">
-                        <div style="font-weight: 700; font-size: 0.9rem;">${task.name}</div>
-                        <div style="font-size: 0.75rem; color: #6b7280; margin: 0.25rem 0;">⏱ ${task.time} • ${task.difficulty}</div>
-                        <div style="font-weight: 900; color: #10b981; font-size: 1.1rem;">$${task.pay}</div>
-                    </div>`;
-                });
-                html += '</div>';
+            html += '<h3>💪 Daily Athletic (Required 2/day)</h3>';
+            html += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.875rem;">';
+            taskTemplates.athletic.slice(0, 8).forEach(task => {
+                html += `<div class="card" style="padding: 1rem; cursor: pointer; text-align: center;" onclick="addTask('${currentKid}', '${task.name.replace(/'/g, '\\\'')}', '${task.category.replace(/'/g, '\\\'')}', ${task.pay}, '${task.requirement.replace(/'/g, '\\\'')}', true)">
+                    <div style="font-weight: 800; font-size: 0.95rem; margin-bottom: 0.5rem;">${task.name}</div>
+                    <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.75rem;">⏱ ${task.time}</div>
+                    <div style="font-weight: 900; color: #10b981; font-size: 1.25rem;">$${task.pay}</div>
+                </div>`;
             });
+            html += '</div>';
+
+            html += '<h3>🏠 House Jobs</h3>';
+            html += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.875rem;">';
+            taskTemplates.house.slice(0, 6).forEach(task => {
+                html += `<div class="card" style="padding: 1rem; cursor: pointer; text-align: center;" onclick="addTask('${currentKid}', '${task.name.replace(/'/g, '\\\'')}', '${task.category.replace(/'/g, '\\\'')}', ${task.pay}, '${task.requirement.replace(/'/g, '\\\'')}', false)">
+                    <div style="font-weight: 800; font-size: 0.95rem; margin-bottom: 0.5rem;">${task.name}</div>
+                    <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.75rem;">⏱ ${task.time}</div>
+                    <div style="font-weight: 900; color: #10b981; font-size: 1.25rem;">$${task.pay}</div>
+                </div>`;
+            });
+            html += '</div>';
 
             content.innerHTML = html;
         }
@@ -979,36 +1101,16 @@
             const content = document.getElementById('records-content');
             let html = '<h3 style="margin-top: 0;">This Week Rankings</h3>';
 
-            // Most tasks completed
-            const byCompleted = kids.map(k => ({
-                name: data.kids[k].name,
-                kid: k,
-                count: data.tasks[k].filter(t => t.approved).length
-            })).sort((a, b) => b.count - a.count);
-
-            html += '<h3>Most Tasks Approved</h3>';
+            const byCompleted = kids.map(k => ({ name: data.kids[k].name, count: data.tasks[k].filter(t => t.approved).length })).sort((a, b) => b.count - a.count);
+            html += '<h3>Most Tasks Completed</h3>';
             byCompleted.forEach((item, i) => {
-                html += `<div class="leaderboard-item">
-                    <div class="leaderboard-rank">${i + 1}</div>
-                    <div class="leaderboard-name">${item.name}</div>
-                    <div class="leaderboard-value">${item.count} ✓</div>
-                </div>`;
+                html += `<div class="leaderboard-item"><div class="leaderboard-rank">${i + 1}</div><div class="leaderboard-name">${item.name}</div><div class="leaderboard-value">${item.count} ✓</div></div>`;
             });
 
-            // Most money earned
-            const byMoney = kids.map(k => ({
-                name: data.kids[k].name,
-                kid: k,
-                earned: data.tasks[k].filter(t => t.approved).reduce((sum, t) => sum + t.pay, 0)
-            })).sort((a, b) => b.earned - a.earned);
-
+            const byMoney = kids.map(k => ({ name: data.kids[k].name, earned: data.tasks[k].filter(t => t.approved).reduce((s, t) => s + t.pay, 0) })).sort((a, b) => b.earned - a.earned);
             html += '<h3 style="margin-top: 1.5rem;">Most Money Earned</h3>';
             byMoney.forEach((item, i) => {
-                html += `<div class="leaderboard-item">
-                    <div class="leaderboard-rank">${i + 1}</div>
-                    <div class="leaderboard-name">${item.name}</div>
-                    <div class="leaderboard-value">$${item.earned}</div>
-                </div>`;
+                html += `<div class="leaderboard-item"><div class="leaderboard-rank">${i + 1}</div><div class="leaderboard-name">${item.name}</div><div class="leaderboard-value">$${item.earned}</div></div>`;
             });
 
             content.innerHTML = html;
@@ -1019,21 +1121,15 @@
             let html = '';
 
             kids.forEach(kid => {
-                const tasks = data.tasks[kid].filter(t => t.completed && !t.approved);
-                if (tasks.length === 0) return;
-
+                const pending = data.tasks[kid].filter(t => t.completed && !t.approved);
+                if (!pending.length) return;
                 html += `<h3>${data.kids[kid].name}</h3>`;
-                tasks.forEach(task => {
+                pending.forEach(task => {
                     html += `<div class="card">
-                        <div class="task-header">
-                            <div class="task-name">${task.name}</div>
-                            <div class="task-pay">$${task.pay}</div>
-                        </div>
+                        <div class="task-header"><div class="task-name">${task.name}</div><div class="task-pay">$${task.pay}</div></div>
                         <div class="task-requirement">${task.requirement}</div>
-                        ${task.checklist ? `<div class="checklist">
-                            ${task.checklist.map((item, i) => `<div class="checklist-item"><span style="color: ${task.checklistProgress && task.checklistProgress[i] ? '#10b981' : '#d1d5db'};">✓</span> ${item}</div>`).join('')}
-                        </div>` : ''}
-                        <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                        ${task.checklist ? `<div class="checklist">${task.checklist.map(item => `<div class="checklist-item"><div class="checkbox checked">✓</div><div class="checkbox-label">${item}</div></div>`).join('')}</div>` : ''}
+                        <div style="margin-top: 1rem; display: flex; gap: 0.75rem;">
                             <button class="btn-block" onclick="approveTask('${kid}', ${task.id})">✓ Approve</button>
                             <button class="btn-danger btn-block" onclick="rejectTask('${kid}', ${task.id})">✗ Reject</button>
                         </div>
@@ -1041,32 +1137,29 @@
                 });
             });
 
-            if (html === '') {
-                html = '<div class="empty-state"><div class="empty-emoji">✓</div><p>All caught up! No pending tasks.</p></div>';
-            }
-
+            if (!html) html = '<div class="empty-state"><div class="empty-emoji">✅</div><p style="font-size: 1.125rem; font-weight: 700; margin-top: 1rem;">All caught up!</p></div>';
             content.innerHTML = html;
         }
 
         function renderPayout() {
             const content = document.getElementById('payout-content');
-            const sundayDate = getNextSunday();
-            let html = `<div class="countdown">📅 Payout Date: ${sundayDate}</div>`;
+            const daysLeft = getDaysUntilSunday();
+            const total = getTotalApprovedUnpaid();
 
+            let html = `<div class="countdown">📅 ${daysLeft} day${daysLeft !== 1 ? 's' : ''} until Sunday payout</div>`;
             html += `<div class="card gradient-emerald" style="margin-bottom: 1.5rem;">
-                <div style="font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem;">Total This Week</div>
-                <div style="font-size: 2.5rem; font-weight: 900;">$${getTotalApprovedUnpaid()}</div>
-                <button class="btn-block" style="margin-top: 1rem;" onclick="payoutAll()">💰 Pay All Kids</button>
+                <div style="font-size: 1.25rem; font-weight: 800; margin-bottom: 0.75rem;">Total To Pay This Sunday</div>
+                <div style="font-size: 3rem; font-weight: 900; margin-bottom: 1.5rem;">$${total}</div>
+                <button class="btn-block" onclick="payoutAll()" style="background: white; color: #059669; font-size: 1.125rem;">💰 Pay All Kids Now</button>
             </div>`;
 
             kids.forEach(kid => {
-                const approved = data.tasks[kid].filter(t => t.approved && !t.paid).reduce((sum, t) => sum + t.pay, 0);
-                if (approved === 0) return;
-
+                const approved = data.tasks[kid].filter(t => t.approved && !t.paid).reduce((s, t) => s + t.pay, 0);
+                if (!approved) return;
                 html += `<div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                        <div style="font-weight: 700; font-size: 1.125rem;">${data.kids[kid].name}</div>
-                        <div style="font-size: 1.5rem; font-weight: 900;">$${approved}</div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <div style="font-weight: 800; font-size: 1.25rem;">${data.kids[kid].name}</div>
+                        <div style="font-size: 2rem; font-weight: 900; color: #10b981;">$${approved}</div>
                     </div>
                     <button class="btn-block" onclick="payoutKid('${kid}')">Pay ${data.kids[kid].name}</button>
                 </div>`;
@@ -1076,7 +1169,7 @@
         }
 
         // ===== TASK FUNCTIONS =====
-        function addTask(kid, name, category, pay, requirement) {
+        function addTask(kid, name, category, pay, requirement, isAthletic = false) {
             const newTask = {
                 id: Date.now(),
                 name,
@@ -1086,18 +1179,41 @@
                 completed: false,
                 approved: false,
                 paid: false,
-                dateAdded: new Date().toLocaleDateString()
+                isAthletic,
+                checklist: null,
+                checklistProgress: null
             };
             data.tasks[kid].push(newTask);
+            checkAndAwardBadges(kid);
             saveData();
             render();
         }
 
-        function toggleTask(kid, taskId, submit = false) {
+        function completeTask(kid, taskId) {
             const task = data.tasks[kid].find(t => t.id === taskId);
-            if (task && submit) {
+            if (task && !task.completed) {
                 task.completed = true;
                 data.kids[kid].pending += task.pay;
+                if (task.isAthletic) data.kids[kid].athleticWeek++;
+                celebrate();
+                checkAndAwardBadges(kid);
+                saveData();
+                render();
+            }
+        }
+
+        function toggleChecklistItem(event, kid, taskId, itemIndex) {
+            event.stopPropagation();
+            const task = data.tasks[kid].find(t => t.id === taskId);
+            if (task && task.checklist) {
+                if (!task.checklistProgress) task.checklistProgress = new Array(task.checklist.length).fill(false);
+                task.checklistProgress[itemIndex] = !task.checklistProgress[itemIndex];
+                const allDone = task.checklistProgress.every(x => x);
+                if (allDone && !task.completed) {
+                    task.completed = true;
+                    data.kids[kid].pending += task.pay;
+                    celebrate();
+                }
                 saveData();
                 render();
             }
@@ -1109,6 +1225,12 @@
                 task.approved = true;
                 data.kids[kid].pending -= task.pay;
                 data.kids[kid].approved += task.pay;
+                if (task.isAthletic && data.kids[kid].athleticWeek >= 10) {
+                    data.kids[kid].pending += 10;
+                    data.kids[kid].athleticWeek = 0;
+                    addBadge(kid, 'Weekly Athlete');
+                }
+                checkAndAwardBadges(kid);
                 saveData();
                 render();
             }
@@ -1119,23 +1241,22 @@
             if (task) {
                 task.completed = false;
                 data.kids[kid].pending -= task.pay;
+                if (task.isAthletic) data.kids[kid].athleticWeek--;
                 saveData();
                 render();
             }
         }
 
         function payoutKid(kid) {
-            const approved = data.tasks[kid].filter(t => t.approved && !t.paid).reduce((sum, t) => sum + t.pay, 0);
+            const approved = data.tasks[kid].filter(t => t.approved && !t.paid).reduce((s, t) => s + t.pay, 0);
             if (approved > 0) {
-                data.tasks[kid].forEach(t => {
-                    if (t.approved && !t.paid) {
-                        t.paid = true;
-                    }
-                });
+                data.tasks[kid].forEach(t => { if (t.approved && !t.paid) t.paid = true; });
                 data.kids[kid].earned += approved;
                 data.kids[kid].approved -= approved;
                 data.kids[kid].paidHistory.push({ amount: approved, date: new Date().toLocaleDateString() });
+                addBadge(kid, 'Payout Ready');
                 saveData();
+                celebrate();
                 render();
             }
         }
@@ -1145,26 +1266,31 @@
         }
 
         function randomTask(kid) {
-            const allTasks = [...taskTemplates.houseSm, ...taskTemplates.athleticSm];
-            const random = allTasks[Math.floor(Math.random() * allTasks.length)];
-            addTask(kid, random.name, random.category, random.pay, random.requirement);
+            const allTasks = [...taskTemplates.house, ...taskTemplates.athletic];
+            const task = allTasks[Math.floor(Math.random() * allTasks.length)];
+            addTask(kid, task.name, task.category, task.pay, task.requirement, task.isAthletic);
+        }
+
+        function addBadge(kid, badge) {
+            if (!data.kids[kid].badges.includes(badge)) {
+                data.kids[kid].badges.push(badge);
+            }
+        }
+
+        function checkAndAwardBadges(kid) {
+            const tasks = data.tasks[kid];
+            if (tasks.length === 1) addBadge(kid, 'First Task');
+            if (tasks.filter(t => t.completed && t.category.includes('Bedroom')).length >= 1) addBadge(kid, 'Bedroom Boss');
+            if (tasks.filter(t => t.completed && t.category.includes('Bathroom')).length >= 1) addBadge(kid, 'Bathroom Beast');
         }
 
         // ===== UTILITY =====
-        function getNextSunday() {
-            const today = new Date();
-            const nextSunday = new Date(today);
-            nextSunday.setDate(today.getDate() + (7 - today.getDay()) % 7 || 7);
-            return nextSunday.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        }
-
         function getDaysUntilSunday() {
             const today = new Date();
-            const daysUntil = (7 - today.getDay()) % 7 || 7;
-            return daysUntil;
+            return (7 - today.getDay()) % 7 || 7;
         }
 
-        function getTotalWeeklyEstimated() {
+        function getTotalWeekly() {
             return kids.reduce((sum, kid) => sum + data.kids[kid].pending, 0);
         }
 
