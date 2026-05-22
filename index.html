@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Summer Money - Chore & Soccer Tracker</title>
+    <title>Summer Money - Family Allowance Tracker</title>
     <style>
         * {
             margin: 0;
@@ -13,9 +13,9 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            background: linear-gradient(135deg, #f0f9ff 0%, #f3f4f6 100%);
             min-height: 100vh;
-            padding-bottom: 80px;
+            padding-bottom: 100px;
         }
 
         .header {
@@ -23,12 +23,12 @@
             top: 0;
             z-index: 50;
             background: white;
-            border-bottom: 2px solid #e5e7eb;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-bottom: 3px solid #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
 
         .header-content {
-            max-width: 480px;
+            max-width: 600px;
             margin: 0 auto;
             padding: 1rem;
             display: flex;
@@ -37,7 +37,7 @@
         }
 
         .header h1 {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: 900;
             background: linear-gradient(135deg, #10b981, #14b8a6);
             -webkit-background-clip: text;
@@ -45,28 +45,33 @@
             background-clip: text;
         }
 
-        .mode-toggle {
+        .header-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .header-btn {
+            padding: 0.5rem 0.75rem;
+            border: none;
+            border-radius: 0.5rem;
             font-size: 0.75rem;
             font-weight: bold;
-            padding: 0.5rem 0.75rem;
-            border-radius: 9999px;
-            border: none;
             cursor: pointer;
             transition: all 0.2s;
         }
 
-        .mode-toggle.child {
-            background: #f3f4f6;
-            color: #374151;
+        .header-btn.active {
+            background: #10b981;
+            color: white;
         }
 
-        .mode-toggle.parent {
-            background: #e0e7ff;
-            color: #312e81;
+        .header-btn.inactive {
+            background: #f3f4f6;
+            color: #6b7280;
         }
 
         .container {
-            max-width: 480px;
+            max-width: 600px;
             margin: 0 auto;
             padding: 1rem;
         }
@@ -79,143 +84,174 @@
             display: block;
         }
 
-        .card {
-            background: white;
-            border-radius: 0.75rem;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border: 2px solid #e5e7eb;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-
-        .card.gradient-emerald {
-            background: linear-gradient(135deg, #a7f3d0 0%, #a7f3d0 50%, #6ee7b7 100%);
-            border: none;
-            color: white;
-        }
-
-        .card.gradient-purple {
-            background: linear-gradient(135deg, #ddd6fe 0%, #c4b5fd 100%);
-            border: none;
-        }
-
         h2 {
-            font-size: 1.5rem;
+            font-size: 1.75rem;
             font-weight: 900;
             color: #111827;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         h3 {
             font-size: 1.125rem;
-            font-weight: bold;
-            color: #374151;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        .card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            border: 2px solid #e5e7eb;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-color: #d1d5db;
+        }
+
+        .card.gradient-emerald {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border: none;
+            color: #065f46;
+        }
+
+        .card.gradient-purple {
+            background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+            border: none;
+            color: #5b21b6;
+        }
+
+        .kid-card {
+            border-left: 4px solid;
+            cursor: pointer;
+        }
+
+        .kid-card.olli { border-left-color: #3b82f6; }
+        .kid-card.jackson { border-left-color: #f59e0b; }
+        .kid-card.kennedy { border-left-color: #ec4899; }
+        .kid-card.grayson { border-left-color: #06b6d4; }
+
+        .kid-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 0.75rem;
-            margin-top: 1.5rem;
+        }
+
+        .kid-name {
+            font-size: 1.25rem;
+            font-weight: 900;
+        }
+
+        .kid-payout {
+            font-size: 1.5rem;
+            font-weight: 900;
+        }
+
+        .progress-container {
+            margin: 1rem 0;
+        }
+
+        .progress-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress-bar {
+            background: #e5e7eb;
+            height: 10px;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #10b981, #14b8a6);
+            height: 100%;
+            transition: width 0.3s ease;
         }
 
         .stat-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 0.75rem;
-            margin-bottom: 1rem;
+            margin: 1rem 0;
         }
 
         .stat-box {
-            background: white;
-            border: 2px solid;
-            border-radius: 0.5rem;
-            padding: 1rem;
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 0.75rem;
             text-align: center;
         }
-
-        .stat-box.emerald { border-color: #10b981; }
-        .stat-box.amber { border-color: #f59e0b; }
-        .stat-box.blue { border-color: #3b82f6; }
-        .stat-box.green { border-color: #22c55e; }
-        .stat-box.orange { border-color: #f97316; }
 
         .stat-label {
             font-size: 0.75rem;
             font-weight: 600;
             text-transform: uppercase;
+            color: #6b7280;
             margin-bottom: 0.25rem;
         }
 
         .stat-value {
-            font-size: 1.75rem;
+            font-size: 1.5rem;
             font-weight: 900;
-        }
-
-        .progress-bar {
-            background: #e5e7eb;
-            height: 12px;
-            border-radius: 9999px;
-            overflow: hidden;
-            margin: 0.5rem 0;
-        }
-
-        .progress-fill {
-            background: linear-gradient(90deg, #c084fc, #f472b6);
-            height: 100%;
-            transition: width 0.3s ease;
+            color: #1f2937;
         }
 
         .task-item {
-            background: white;
+            background: #f9fafb;
             border: 2px solid #e5e7eb;
-            border-radius: 0.5rem;
-            padding: 0.75rem;
-            margin-bottom: 0.5rem;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.2s;
+        }
+
+        .task-item.completed {
+            background: #d1fae5;
+            border-color: #10b981;
+            opacity: 0.7;
+        }
+
+        .task-item.approved {
+            background: #dbeafe;
+            border-color: #3b82f6;
+        }
+
+        .task-header {
             display: flex;
+            justify-content: space-between;
             align-items: flex-start;
-            gap: 0.75rem;
-        }
-
-        .checkbox {
-            width: 20px;
-            height: 20px;
-            border: 2px solid #d1d5db;
-            border-radius: 50%;
-            cursor: pointer;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-            font-size: 0.75rem;
-        }
-
-        .checkbox.checked {
-            background: #10b981;
-            border-color: #059669;
-        }
-
-        .task-content {
-            flex: 1;
+            margin-bottom: 0.5rem;
         }
 
         .task-name {
-            font-weight: 600;
+            font-weight: 700;
             color: #1f2937;
-            margin-bottom: 0.25rem;
+            flex: 1;
+        }
+
+        .task-pay {
+            background: #10b981;
+            color: white;
+            font-weight: bold;
+            font-size: 0.875rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
         }
 
         .task-requirement {
             font-size: 0.875rem;
             color: #6b7280;
-        }
-
-        .task-pay {
-            display: inline-block;
-            background: #d1fae5;
-            color: #065f46;
-            font-weight: bold;
-            font-size: 0.75rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem;
-            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
         }
 
         .task-status {
@@ -224,40 +260,83 @@
             color: #6b7280;
             font-weight: 600;
             font-size: 0.75rem;
-            padding: 0.25rem 0.5rem;
+            padding: 0.25rem 0.75rem;
             border-radius: 0.25rem;
-            margin-left: 0.5rem;
             margin-top: 0.5rem;
+        }
+
+        .checklist {
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+        }
+
+        .checklist-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #d1d5db;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .checkbox.checked {
+            background: #10b981;
+            border-color: #059669;
+            color: white;
+            font-weight: bold;
+        }
+
+        .checkbox-label {
+            flex: 1;
+            cursor: pointer;
         }
 
         button {
             background: #10b981;
             color: white;
             border: none;
-            border-radius: 0.5rem;
-            font-weight: bold;
-            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            padding: 0.75rem 1.5rem;
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 0.875rem;
+            font-size: 1rem;
         }
 
         button:hover {
             background: #059669;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
         button:active {
-            transform: scale(0.95);
+            transform: scale(0.98);
         }
 
         .btn-secondary {
-            background: #e5e7eb;
-            color: #374151;
+            background: #6b7280;
         }
 
         .btn-secondary:hover {
-            background: #d1d5db;
+            background: #4b5563;
         }
 
         .btn-danger {
@@ -268,10 +347,8 @@
             background: #dc2626;
         }
 
-        .btn-primary-large {
+        .btn-block {
             width: 100%;
-            padding: 0.75rem;
-            font-size: 1rem;
             margin-bottom: 0.5rem;
         }
 
@@ -281,12 +358,12 @@
             left: 0;
             right: 0;
             background: white;
-            border-top: 2px solid #e5e7eb;
-            box-shadow: 0 -2px 4px rgba(0,0,0,0.05);
+            border-top: 3px solid #e5e7eb;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
         }
 
         .navbar-content {
-            max-width: 480px;
+            max-width: 600px;
             margin: 0 auto;
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -303,19 +380,20 @@
             border: none;
             background: transparent;
             cursor: pointer;
-            color: #6b7280;
+            color: #9ca3af;
             font-size: 0.625rem;
-            font-weight: bold;
+            font-weight: 700;
+            transition: all 0.2s;
         }
 
         .nav-btn.active {
             color: #10b981;
             background: #d1fae5;
-            border-radius: 0.5rem;
+            border-radius: 0.75rem;
         }
 
         .nav-emoji {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
         }
 
         input, select, textarea {
@@ -324,32 +402,142 @@
             border: 2px solid #d1d5db;
             border-radius: 0.5rem;
             font-family: inherit;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
             font-size: 1rem;
         }
 
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .badge {
+            display: inline-block;
+            background: #fcd34d;
+            color: #78350f;
+            font-weight: 700;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            margin-right: 0.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .leaderboard-rank {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #10b981;
+            width: 40px;
+        }
+
+        .leaderboard-name {
+            flex: 1;
+            font-weight: 700;
+        }
+
+        .leaderboard-value {
+            font-size: 1.25rem;
+            font-weight: 900;
+            color: #1f2937;
         }
 
         .empty-state {
             text-align: center;
             padding: 2rem 1rem;
+            color: #6b7280;
         }
 
         .empty-emoji {
-            font-size: 2.5rem;
+            font-size: 3rem;
             margin-bottom: 0.5rem;
         }
 
-        .empty-text {
-            color: #6b7280;
-            font-size: 0.875rem;
+        .pin-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
         }
 
-        @media (max-width: 480px) {
-            body { padding-bottom: 100px; }
+        .pin-modal-content {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .pin-modal-content h2 {
+            margin-top: 0;
+            text-align: center;
+        }
+
+        .pin-pad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .pin-button {
+            padding: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 900;
+        }
+
+        .pin-display {
+            text-align: center;
+            font-size: 2rem;
+            letter-spacing: 0.5rem;
+            margin-bottom: 1rem;
+            height: 40px;
+        }
+
+        .countdown {
+            text-align: center;
+            font-size: 1rem;
+            color: #10b981;
+            font-weight: 700;
+            margin: 1rem 0;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            animation: slideIn 0.3s ease;
+        }
+
+        @media (max-width: 600px) {
+            body { padding-bottom: 120px; }
+            h2 { font-size: 1.5rem; }
         }
     </style>
 </head>
@@ -357,132 +545,96 @@
     <!-- Header -->
     <div class="header">
         <div class="header-content">
-            <h1>Summer Money</h1>
-            <button class="mode-toggle child" onclick="toggleMode()">👦 Oliver</button>
+            <h1>💰 Summer Money</h1>
+            <div class="header-buttons">
+                <button class="header-btn active" onclick="toggleKidMode('olli')">Olli</button>
+                <button class="header-btn" onclick="toggleKidMode('jackson')">Jackson</button>
+                <button class="header-btn" onclick="toggleKidMode('kennedy')">Kennedy</button>
+                <button class="header-btn" onclick="toggleKidMode('grayson')">Grayson</button>
+                <button class="header-btn inactive" onclick="enterParentMode()">👤</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PIN Modal -->
+    <div id="pinModal" class="pin-modal" style="display: none;">
+        <div class="pin-modal-content">
+            <h2>Parent Access</h2>
+            <p style="text-align: center; color: #6b7280; margin-bottom: 1rem;">Enter PIN</p>
+            <div class="pin-display" id="pinDisplay"></div>
+            <div class="pin-pad">
+                <button class="pin-button" onclick="addPin('1')">1</button>
+                <button class="pin-button" onclick="addPin('2')">2</button>
+                <button class="pin-button" onclick="addPin('3')">3</button>
+                <button class="pin-button" onclick="addPin('4')">4</button>
+                <button class="pin-button" onclick="addPin('5')">5</button>
+                <button class="pin-button" onclick="addPin('6')">6</button>
+                <button class="pin-button" onclick="addPin('7')">7</button>
+                <button class="pin-button" onclick="addPin('8')">8</button>
+                <button class="pin-button" onclick="addPin('9')">9</button>
+                <button class="pin-button" onclick="addPin('0')">0</button>
+                <button class="pin-button btn-secondary" onclick="clearPin()">C</button>
+                <button class="pin-button" onclick="submitPin()" style="grid-column: 2 / 4;">OK</button>
+            </div>
+            <button class="btn-secondary btn-block" onclick="cancelPin()">Cancel</button>
         </div>
     </div>
 
     <!-- Main Content -->
     <div class="container">
-        <!-- Dashboard Tab -->
+        <!-- Dashboard -->
         <div id="tab-dashboard" class="tab-content active">
             <h2>Dashboard</h2>
-            
-            <div class="card gradient-emerald">
-                <div style="font-size: 1.25rem; font-weight: 900; margin-bottom: 0.25rem;">Summer Money</div>
-                <div style="font-size: 0.875rem; opacity: 0.9;">Track tasks, earn money, build discipline</div>
-            </div>
-
-            <div class="stat-grid">
-                <div class="stat-box emerald">
-                    <div class="stat-label" style="color: #10b981;">Pending</div>
-                    <div class="stat-value" style="color: #10b981;">$<span id="pending">0</span></div>
-                </div>
-                <div class="stat-box amber">
-                    <div class="stat-label" style="color: #f59e0b;">Total Earned</div>
-                    <div class="stat-value" style="color: #f59e0b;">$<span id="total">0</span></div>
-                </div>
-            </div>
-
-            <div class="card gradient-purple">
-                <div style="font-weight: bold; margin-bottom: 0.5rem;">⚡ Weekly Soccer Bonus</div>
-                <div style="font-weight: bold; margin-bottom: 0.5rem;">$<span id="bonusAmount">10</span></div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="bonusProgress" style="width: 0%;"></div>
-                </div>
-                <div style="font-size: 0.875rem; font-weight: bold; margin-bottom: 0.75rem;">
-                    <span id="soccerCount">0</span> of 4 workouts completed
-                </div>
-                <button class="btn-primary-large" id="claimBonusBtn" style="background: #8b5cf6;" onclick="claimBonus()" style="display: none;">Claim $10 Bonus! 🎉</button>
-            </div>
-
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;">
-                <div class="stat-box blue">
-                    <div class="stat-label" style="color: #3b82f6;">Today</div>
-                    <div class="stat-value" style="color: #3b82f6;" id="todayCount">0</div>
-                    <div style="font-size: 0.75rem; color: #3b82f6;">tasks</div>
-                </div>
-                <div class="stat-box green">
-                    <div class="stat-label" style="color: #22c55e;">Week</div>
-                    <div class="stat-value" style="color: #22c55e;" id="weekCount">0</div>
-                    <div style="font-size: 0.75rem; color: #22c55e;">done</div>
-                </div>
-                <div class="stat-box orange">
-                    <div class="stat-label" style="color: #f97316;">Soccer</div>
-                    <div class="stat-value" style="color: #f97316;" id="soccerWeekCount">0</div>
-                    <div style="font-size: 0.75rem; color: #f97316;">work</div>
-                </div>
-            </div>
+            <div id="dashboard-content"></div>
         </div>
 
-        <!-- Tasks Tab -->
+        <!-- Kids -->
+        <div id="tab-kids" class="tab-content">
+            <h2>Kids</h2>
+            <div id="kids-content"></div>
+        </div>
+
+        <!-- Tasks -->
         <div id="tab-tasks" class="tab-content">
-            <h2>My Tasks</h2>
-            
-            <h3>House Jobs</h3>
-            <div id="house-tasks"></div>
-
-            <h3>Soccer Player Jobs</h3>
-            <div id="soccer-tasks"></div>
+            <h2>Tasks</h2>
+            <div id="tasks-content"></div>
         </div>
 
-        <!-- Ideas Tab -->
+        <!-- Ideas -->
         <div id="tab-ideas" class="tab-content">
-            <h2>What to Do Today?</h2>
-            <button class="btn-primary-large" onclick="surprise()" style="background: #ec4899; margin-bottom: 1rem;">🎲 Surprise Me!</button>
-            <div id="surprise-result"></div>
-            
-            <h3>Quick Money (5-10 min)</h3>
-            <div id="ideas-quick"></div>
-
-            <h3>Bigger Money (30-60 min)</h3>
-            <div id="ideas-bigger"></div>
+            <h2>Ideas</h2>
+            <div id="ideas-content"></div>
         </div>
 
-        <!-- Earnings Tab -->
-        <div id="tab-earnings" class="tab-content">
-            <h2>Earnings & Payouts</h2>
-            
-            <div class="card" style="background: #fef3c7; border: 2px solid #f59e0b;">
-                <div style="font-size: 0.875rem; font-weight: bold; color: #92400e; margin-bottom: 0.25rem;">Pending Payout</div>
-                <div style="font-size: 2rem; font-weight: 900; color: #92400e; margin-bottom: 0.75rem;">$<span id="pendingDisplay">0</span></div>
-                <button class="btn-primary-large" onclick="markAsPaid()">Mark as Paid 💰</button>
-            </div>
-
-            <div class="stat-grid">
-                <div class="stat-box blue">
-                    <div class="stat-label" style="color: #3b82f6;">House</div>
-                    <div class="stat-value" style="color: #3b82f6;">$<span id="houseTotal">0</span></div>
-                </div>
-                <div class="stat-box orange">
-                    <div class="stat-label" style="color: #f97316;">Soccer</div>
-                    <div class="stat-value" style="color: #f97316;">$<span id="soccerTotal">0</span></div>
-                </div>
-            </div>
-
-            <div class="card" style="background: #ede9fe; border: 2px solid #c084fc;">
-                <div style="font-size: 0.875rem; font-weight: bold; color: #5b21b6; margin-bottom: 0.25rem;">All-Time Earnings</div>
-                <div style="font-size: 2rem; font-weight: 900; color: #5b21b6;">$<span id="allTimeTotal">0</span></div>
-            </div>
-
-            <h3>Payment History</h3>
-            <div id="payment-history"></div>
+        <!-- Parent Review -->
+        <div id="tab-review" class="tab-content" style="display: none;">
+            <h2>Review</h2>
+            <div id="review-content"></div>
         </div>
 
-        <!-- Parent Review Tab -->
-        <div id="tab-parent" class="tab-content" style="display: none;">
-            <h2>Parent Review</h2>
-            <p style="color: #6b7280; margin-bottom: 1rem;">Approve or reject completed tasks</p>
-            <div id="pending-tasks"></div>
+        <!-- Payout -->
+        <div id="tab-payout" class="tab-content" style="display: none;">
+            <h2>Payout</h2>
+            <div id="payout-content"></div>
+        </div>
+
+        <!-- Leaderboard -->
+        <div id="tab-records" class="tab-content">
+            <h2>Leaderboard</h2>
+            <div id="records-content"></div>
         </div>
     </div>
 
-    <!-- Navigation Bar -->
+    <!-- Navigation -->
     <div class="navbar">
         <div class="navbar-content">
             <button class="nav-btn active" onclick="switchTab('dashboard')">
-                <span class="nav-emoji">🏠</span>
-                <span>Home</span>
+                <span class="nav-emoji">📊</span>
+                <span>Dashboard</span>
+            </button>
+            <button class="nav-btn" onclick="switchTab('kids')">
+                <span class="nav-emoji">👥</span>
+                <span>Kids</span>
             </button>
             <button class="nav-btn" onclick="switchTab('tasks')">
                 <span class="nav-emoji">✓</span>
@@ -492,286 +644,536 @@
                 <span class="nav-emoji">💡</span>
                 <span>Ideas</span>
             </button>
-            <button class="nav-btn" onclick="switchTab('earnings')">
-                <span class="nav-emoji">💵</span>
-                <span>Earn</span>
-            </button>
-            <button class="nav-btn" id="settings-btn" onclick="alert('Settings coming soon')">
-                <span class="nav-emoji">⚙️</span>
-                <span>More</span>
+            <button class="nav-btn" onclick="switchTab('records')">
+                <span class="nav-emoji">🏆</span>
+                <span>Records</span>
             </button>
         </div>
     </div>
 
     <script>
-        // Data Management
-        let isParentMode = false;
-        let tasks = JSON.parse(localStorage.getItem('tasks')) || {
-            house: [
-                { id: 1, name: 'Take out trash', requirement: 'Empty all bins', pay: 2, completed: false, approved: false },
-                { id: 2, name: 'Wipe bathroom counter', requirement: 'Clean and dry', pay: 2, completed: false, approved: false },
-                { id: 3, name: 'Sweep kitchen', requirement: 'Entire floor', pay: 2, completed: false, approved: false },
-                { id: 4, name: 'Empty dishwasher', requirement: 'All dishes away', pay: 2, completed: false, approved: false },
-                { id: 5, name: 'Fold laundry basket', requirement: 'All folded and ready', pay: 3, completed: false, approved: false },
-                { id: 6, name: 'Clean bedroom fully', requirement: 'Bed made, floor clear', pay: 5, completed: false, approved: false },
-                { id: 7, name: 'Wash car exterior', requirement: 'Washed and dried', pay: 10, completed: false, approved: false },
+        // ===== STATE MANAGEMENT =====
+        let currentKid = 'olli';
+        let parentMode = false;
+        let parentPin = '1234';
+        let enteredPin = '';
+
+        const kids = ['olli', 'jackson', 'kennedy', 'grayson'];
+        const kidColors = { olli: '#3b82f6', jackson: '#f59e0b', kennedy: '#ec4899', grayson: '#06b6d4' };
+        const kidEmojis = { olli: '⚽', jackson: '🏃', kennedy: '💪', grayson: '🧘' };
+
+        // Initialize data
+        let data = JSON.parse(localStorage.getItem('summerMoneyData')) || initializeData();
+
+        function initializeData() {
+            return {
+                kids: {
+                    olli: { name: 'Olli', color: '#3b82f6', earned: 0, pending: 0, approved: 0, paidHistory: [], records: { juggling: 0 }, badges: [], streak: 0, goal: 40 },
+                    jackson: { name: 'Jackson', color: '#f59e0b', earned: 0, pending: 0, approved: 0, paidHistory: [], records: { juggling: 0 }, badges: [], streak: 0, goal: 40 },
+                    kennedy: { name: 'Kennedy', color: '#ec4899', earned: 0, pending: 0, approved: 0, paidHistory: [], records: { juggling: 0 }, badges: [], streak: 0, goal: 40 },
+                    grayson: { name: 'Grayson', color: '#06b6d4', earned: 0, pending: 0, approved: 0, paidHistory: [], records: { juggling: 0 }, badges: [], streak: 0, goal: 40 }
+                },
+                tasks: {
+                    olli: [], jackson: [], kennedy: [], grayson: []
+                },
+                lastPayout: null,
+                weeklyAthletic: { olli: 0, jackson: 0, kennedy: 0, grayson: 0 }
+            };
+        }
+
+        // ===== TASK DEFINITIONS =====
+        const taskTemplates = {
+            houseSm: [
+                { name: 'Take out trash', category: '🏠 House', pay: 2, requirement: 'Trash bins to curb', time: '10 min', difficulty: 'Easy' },
+                { name: 'Take recycling out', category: '🏠 House', pay: 2, requirement: 'Recycling bin to curb', time: '10 min', difficulty: 'Easy' },
+                { name: 'Wipe bathroom counter and sink', category: '🚿 Bathroom', pay: 2, requirement: 'Counter and sink clean', time: '10 min', difficulty: 'Easy' },
+                { name: 'Sweep kitchen', category: '🧹 Cleaning', pay: 2, requirement: 'Entire kitchen floor', time: '15 min', difficulty: 'Easy' },
+                { name: 'Vacuum one room', category: '🧹 Cleaning', pay: 3, requirement: 'Room completely vacuumed', time: '20 min', difficulty: 'Easy' },
+                { name: 'Fold a basket of laundry', category: '🧺 Laundry', pay: 1, requirement: 'All items folded neatly', time: '20 min', difficulty: 'Easy' },
+                { name: 'Empty dishwasher', category: '🏠 House', pay: 2, requirement: 'All dishes put away', time: '10 min', difficulty: 'Easy' },
+                { name: 'Wipe kitchen table and counters', category: '🧹 Cleaning', pay: 2, requirement: 'Clean and wiped down', time: '15 min', difficulty: 'Easy' },
+                { name: 'Pick up living room', category: '🏠 House', pay: 2, requirement: 'Tidy and organized', time: '15 min', difficulty: 'Easy' },
+                { name: 'Poop duty around the entire house', category: '🐶 Poop Duty', pay: 2, requirement: 'All areas checked and cleaned', time: '15 min', difficulty: 'Easy' }
             ],
-            soccer: [
-                { id: 101, name: 'Juggling practice (10 min)', requirement: '10 minutes focused', pay: 2, completed: false, approved: false },
-                { id: 102, name: 'Wall passes (100 touches)', requirement: '100 touches', pay: 2, completed: false, approved: false },
-                { id: 103, name: 'Pushups (3×10)', requirement: 'Complete 3 sets of 10', pay: 2, completed: false, approved: false },
-                { id: 104, name: 'Easy run (1 mile)', requirement: '1 mile easy pace', pay: 5, completed: false, approved: false },
-                { id: 105, name: 'Sprint workout', requirement: '8-10 short sprints', pay: 5, completed: false, approved: false },
-                { id: 106, name: 'Full soccer workout (45 min)', requirement: 'Comprehensive session', pay: 10, completed: false, approved: false },
+            houseMd: [
+                { name: 'Clean bedroom fully (checklist)', category: '🛏 Bedroom', pay: 5, requirement: 'Floor, bed, laundry, dust, vacuum', time: '45 min', difficulty: 'Medium', checklist: ['Floor picked up', 'Bed made', 'Laundry put away', 'Wood dusted', 'Vacuum completed'] },
+                { name: 'Vacuum upstairs or downstairs', category: '🧹 Cleaning', pay: 5, requirement: 'Entire level vacuumed', time: '30 min', difficulty: 'Medium' },
+                { name: 'Clean bathroom (checklist)', category: '🚿 Bathroom', pay: 5, requirement: 'Sink, counter, mirror, toilet, trash, floor', time: '45 min', difficulty: 'Medium', checklist: ['Sink wiped', 'Counter cleaned', 'Mirror cleaned', 'Toilet cleaned', 'Trash emptied', 'Floor picked up', 'Floor vacuumed/swept', 'Towels picked up'] },
+                { name: 'Help carry groceries and put them away', category: '🏠 House', pay: 5, requirement: 'Everything unpacked and organized', time: '20 min', difficulty: 'Medium' },
+                { name: 'Pull weeds for 20 minutes', category: '🌿 Yard Work', pay: 5, requirement: '20 min focused weeding', time: '20 min', difficulty: 'Medium' },
+                { name: 'Clean out car trash and wipe surfaces', category: '🏠 House', pay: 5, requirement: 'Interior cleaned and wiped', time: '30 min', difficulty: 'Medium' }
+            ],
+            houseLg: [
+                { name: 'Wash car exterior', category: '🏠 House', pay: 10, requirement: 'Washed and dried', time: '60 min', difficulty: 'Hard', variable: { min: 10, max: 10 } },
+                { name: 'Deep clean bedroom (checklist)', category: '🛏 Bedroom', pay: 10, requirement: 'Full deep clean', time: '90 min', difficulty: 'Hard', checklist: ['Everything organized', 'Dusted completely', 'Floor swept and vacuumed', 'Bed linens fresh'] },
+                { name: 'Organize closet or drawers', category: '🛏 Bedroom', pay: 10, requirement: 'Neatly folded and organized', time: '60 min', difficulty: 'Hard' },
+                { name: 'Yard work (45-60 min)', category: '🌿 Yard Work', pay: 10, requirement: '45-60 minutes of focused work', time: '60 min', difficulty: 'Hard', variable: { min: 10, max: 15 } },
+                { name: 'Clean garage area with direction', category: '🌿 Yard Work', pay: 10, requirement: 'Organized and swept', time: '90 min', difficulty: 'Hard', variable: { min: 10, max: 15 } }
+            ],
+            athleticSm: [
+                { name: 'Juggling practice (15 min)', category: '⚽ Ball Skills', pay: 2, requirement: '15 minutes focused', time: '15 min', difficulty: 'Easy', metric: true },
+                { name: 'Ball touches (15 min)', category: '⚽ Ball Skills', pay: 2, requirement: '15 minutes of touches', time: '15 min', difficulty: 'Easy' },
+                { name: 'Stretching routine (10 min)', category: '💪 Strength', pay: 2, requirement: 'Full body stretch', time: '10 min', difficulty: 'Easy' },
+                { name: 'Pushups (3x10)', category: '💪 Strength', pay: 2, requirement: 'Complete 3 sets of 10', time: '15 min', difficulty: 'Easy' },
+                { name: 'Sit-ups or crunches (3x15)', category: '💪 Strength', pay: 2, requirement: 'Complete 3 sets of 15', time: '15 min', difficulty: 'Easy' },
+                { name: 'Plank work (3x30 sec)', category: '💪 Strength', pay: 2, requirement: 'Hold 3 rounds of 30 sec', time: '10 min', difficulty: 'Easy' },
+                { name: 'Agility footwork (10 min)', category: '🏃 Fitness', pay: 2, requirement: '10 minutes focused', time: '10 min', difficulty: 'Easy' },
+                { name: 'Wall passes (100 touches)', category: '⚽ Ball Skills', pay: 2, requirement: '100 touches against wall', time: '15 min', difficulty: 'Easy' }
+            ],
+            athleticMd: [
+                { name: '2 loops run', category: '🏃 Fitness', pay: 4, requirement: 'Around pond 2 times', time: '20 min', difficulty: 'Medium' },
+                { name: '1 mile easy run', category: '🏃 Fitness', pay: 5, requirement: '1 mile at easy pace', time: '15 min', difficulty: 'Medium' },
+                { name: 'Sprint workout (8-10 sprints)', category: '🏃 Fitness', pay: 5, requirement: 'Explosive short sprints', time: '20 min', difficulty: 'Medium' },
+                { name: 'Fitness circuit (20 min)', category: '🏃 Fitness', pay: 5, requirement: '20 minutes mixed exercises', time: '20 min', difficulty: 'Medium' },
+                { name: 'Juggling practice (30 min)', category: '⚽ Ball Skills', pay: 5, requirement: '30 minutes focused', time: '30 min', difficulty: 'Medium', metric: true },
+                { name: 'Footwork/agility ladder (20 min)', category: '⚽ Ball Skills', pay: 5, requirement: 'Ladder drills for 20 min', time: '20 min', difficulty: 'Medium' },
+                { name: 'Cone dribbling workout (20 min)', category: '⚽ Ball Skills', pay: 5, requirement: 'Dribble courses for 20 min', time: '20 min', difficulty: 'Medium' },
+                { name: 'Shooting practice (30 min)', category: '⚽ Ball Skills', pay: 5, requirement: '30 minutes shooting', time: '30 min', difficulty: 'Medium' }
+            ],
+            athleticLg: [
+                { name: 'Full athletic workout (45 min)', category: '🏃 Fitness', pay: 10, requirement: 'Comprehensive 45 min session', time: '45 min', difficulty: 'Hard' },
+                { name: 'Run + strength combo', category: '🏃 Fitness', pay: 10, requirement: '1 mi run + pushups + sit-ups + planks', time: '45 min', difficulty: 'Hard' },
+                { name: 'Ball control workout (45 min)', category: '⚽ Ball Skills', pay: 10, requirement: 'Juggling, dribbling, passing', time: '45 min', difficulty: 'Hard', metric: true },
+                { name: 'Game-day prep workout', category: '🏃 Fitness', pay: 10, requirement: 'Stretching, light run, touches, core', time: '40 min', difficulty: 'Hard' }
             ]
         };
 
-        let earnings = JSON.parse(localStorage.getItem('earnings')) || {
-            approved: 0,
-            paid: 0,
-            allTime: 0,
-            history: [],
-            houseTotal: 0,
-            soccerTotal: 0
-        };
-
-        let weeklyBonus = JSON.parse(localStorage.getItem('weeklyBonus')) || {
-            count: 0,
-            claimed: false,
-            weekStart: getWeekStart()
-        };
-
-        function getWeekStart() {
-            const d = new Date();
-            const day = d.getDay();
-            const diff = d.getDate() - day;
-            const sunday = new Date(d.setDate(diff));
-            return sunday.toISOString().split('T')[0];
-        }
-
-        // UI Management
+        // ===== UI FUNCTIONS =====
         function switchTab(tabName) {
-            if (isParentMode && tabName !== 'parent') return;
+            if (parentMode && !['review', 'payout', 'dashboard'].includes(tabName)) return;
             
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             
-            const activeTab = tabName === 'parent' ? 'parent' : tabName;
-            document.getElementById(`tab-${activeTab}`).classList.add('active');
-            event.target.closest('.nav-btn').classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            event.target.closest('.nav-btn')?.classList.add('active');
             
             render();
         }
 
-        function toggleMode() {
-            isParentMode = !isParentMode;
-            const btn = document.querySelector('.mode-toggle');
-            if (isParentMode) {
-                btn.textContent = '👤 Parent';
-                btn.classList.add('parent');
-                btn.classList.remove('child');
-                switchTab('parent');
-            } else {
-                btn.textContent = '👦 Oliver';
-                btn.classList.remove('parent');
-                btn.classList.add('child');
-                switchTab('dashboard');
-            }
+        function toggleKidMode(kid) {
+            currentKid = kid;
+            document.querySelectorAll('.header-btn.active').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            parentMode = false;
             render();
         }
 
-        // Task Functions
-        function completeTask(id, type) {
-            const taskList = type === 'house' ? tasks.house : tasks.soccer;
-            const task = taskList.find(t => t.id === id);
-            if (task) {
-                task.completed = !task.completed;
-                if (type === 'soccer' && task.completed) {
-                    weeklyBonus.count = Math.min(weeklyBonus.count + 1, 4);
-                }
-                saveData();
-                render();
+        function enterParentMode() {
+            document.getElementById('pinModal').style.display = 'flex';
+        }
+
+        function addPin(digit) {
+            if (enteredPin.length < 4) {
+                enteredPin += digit;
+                document.getElementById('pinDisplay').textContent = '●'.repeat(enteredPin.length);
             }
         }
 
-        function approveTask(id, type) {
-            const taskList = type === 'house' ? tasks.house : tasks.soccer;
-            const task = taskList.find(t => t.id === id);
-            if (task && task.completed && !task.approved) {
-                task.approved = true;
-                earnings.approved += task.pay;
-                if (type === 'house') {
-                    earnings.houseTotal += task.pay;
-                } else {
-                    earnings.soccerTotal += task.pay;
-                }
-                saveData();
+        function clearPin() {
+            enteredPin = '';
+            document.getElementById('pinDisplay').textContent = '';
+        }
+
+        function submitPin() {
+            if (enteredPin === parentPin) {
+                parentMode = true;
+                document.getElementById('pinModal').style.display = 'none';
+                enteredPin = '';
+                document.getElementById('pinDisplay').textContent = '';
+                switchTab('review');
                 render();
-            }
-        }
-
-        function rejectTask(id, type) {
-            const taskList = type === 'house' ? tasks.house : tasks.soccer;
-            const task = taskList.find(t => t.id === id);
-            if (task) {
-                task.completed = false;
-                task.approved = false;
-                saveData();
-                render();
-            }
-        }
-
-        function markAsPaid() {
-            if (earnings.approved > 0) {
-                earnings.paid += earnings.approved;
-                earnings.allTime += earnings.approved;
-                earnings.history.push({ amount: earnings.approved, date: new Date().toLocaleDateString() });
-                earnings.approved = 0;
-                tasks.house.forEach(t => { if (t.approved) t.approved = false; t.completed = false; });
-                tasks.soccer.forEach(t => { if (t.approved) t.approved = false; t.completed = false; });
-                saveData();
-                render();
-            }
-        }
-
-        function claimBonus() {
-            if (weeklyBonus.count >= 4 && !weeklyBonus.claimed) {
-                earnings.approved += 10;
-                earnings.soccerTotal += 10;
-                weeklyBonus.claimed = true;
-                saveData();
-                render();
-            }
-        }
-
-        function surprise() {
-            const allIdeas = [
-                '🗑️ Take out trash - $2',
-                '🚿 Wipe bathroom - $2',
-                '🧹 Sweep kitchen - $2',
-                '⚽ Juggling (10 min) - $2',
-                '💪 Pushups (3×10) - $2',
-                '🏃 Easy 1-mile run - $5',
-                '⚽ Full workout (45 min) - $10',
-                '🚗 Wash car - $10'
-            ];
-            const random = allIdeas[Math.floor(Math.random() * allIdeas.length)];
-            document.getElementById('surprise-result').innerHTML = `<div class="card" style="background: white; border: 4px solid #ec4899; text-align: center;"><div style="font-size: 2rem; margin-bottom: 0.5rem;">✨</div><div style="font-size: 1.125rem; font-weight: bold;">${random}</div></div>`;
-        }
-
-        // Rendering
-        function render() {
-            // Update stats
-            document.getElementById('pending').textContent = earnings.approved;
-            document.getElementById('total').textContent = earnings.allTime;
-            document.getElementById('pendingDisplay').textContent = earnings.approved;
-            document.getElementById('houseTotal').textContent = earnings.houseTotal;
-            document.getElementById('soccerTotal').textContent = earnings.soccerTotal;
-            document.getElementById('allTimeTotal').textContent = earnings.allTime;
-            document.getElementById('soccerCount').textContent = weeklyBonus.count;
-            document.getElementById('bonusProgress').style.width = (weeklyBonus.count / 4) * 100 + '%';
-            document.getElementById('claimBonusBtn').style.display = weeklyBonus.count >= 4 && !weeklyBonus.claimed ? 'block' : 'none';
-
-            // Render tasks
-            if (!isParentMode) {
-                renderHouseTasks();
-                renderSoccerTasks();
-                renderIdeas();
-                renderPaymentHistory();
             } else {
-                renderPendingTasks();
+                alert('Incorrect PIN');
+                clearPin();
             }
         }
 
-        function renderHouseTasks() {
-            const container = document.getElementById('house-tasks');
-            container.innerHTML = tasks.house.map(t => `
-                <div class="task-item">
-                    <div class="checkbox ${t.completed ? 'checked' : ''}" onclick="completeTask(${t.id}, 'house')">${t.completed ? '✓' : ''}</div>
-                    <div class="task-content">
-                        <div class="task-name">${t.name}</div>
-                        <div class="task-requirement">${t.requirement}</div>
-                        <span class="task-pay">$${t.pay}</span>
-                        <span class="task-status">${t.approved ? 'Approved' : t.completed ? 'Pending' : 'Not Started'}</span>
-                    </div>
-                </div>
-            `).join('');
+        function cancelPin() {
+            enteredPin = '';
+            document.getElementById('pinDisplay').textContent = '';
+            document.getElementById('pinModal').style.display = 'none';
         }
 
-        function renderSoccerTasks() {
-            const container = document.getElementById('soccer-tasks');
-            container.innerHTML = tasks.soccer.map(t => `
-                <div class="task-item">
-                    <div class="checkbox ${t.completed ? 'checked' : ''}" onclick="completeTask(${t.id}, 'soccer')">${t.completed ? '✓' : ''}</div>
-                    <div class="task-content">
-                        <div class="task-name">${t.name}</div>
-                        <div class="task-requirement">${t.requirement}</div>
-                        <span class="task-pay">$${t.pay}</span>
-                        <span class="task-status">${t.approved ? 'Approved' : t.completed ? 'Pending' : 'Not Started'}</span>
+        // ===== RENDERING =====
+        function render() {
+            if (!parentMode) {
+                renderDashboard();
+                renderKids();
+                renderTasks();
+                renderIdeas();
+                renderRecords();
+            } else {
+                renderReview();
+                renderPayout();
+            }
+        }
+
+        function renderDashboard() {
+            const content = document.getElementById('dashboard-content');
+            const sundayDate = getNextSunday();
+            const daysUntilPayout = getDaysUntilSunday();
+            
+            let html = `<div class="countdown">📅 Next Payout: ${daysUntilPayout} days</div>`;
+            
+            html += `<div class="card gradient-emerald">
+                <div style="font-size: 1.5rem; font-weight: 900; margin-bottom: 0.5rem;">This Week's Total</div>
+                <div style="font-size: 2.5rem; font-weight: 900;">$${getTotalWeeklyEstimated()}</div>
+            </div>`;
+
+            kids.forEach(kid => {
+                const kidData = data.kids[kid];
+                const tasks = data.tasks[kid];
+                const athleticCount = tasks.filter(t => t.approved && t.completed && t.category.includes('Ball Skills') || t.category.includes('Fitness')).length;
+                const progressPercent = Math.min((athleticCount / 10) * 100, 100);
+                
+                html += `<div class="card kid-card ${kid}" onclick="toggleKidMode('${kid}')">
+                    <div class="kid-header">
+                        <div>
+                            <div class="kid-name">${kidEmojis[kid]} ${kidData.name}</div>
+                            <div style="font-size: 0.875rem; color: #6b7280;">Estimated Payout</div>
+                        </div>
+                        <div class="kid-payout">$${kidData.pending}</div>
                     </div>
-                </div>
-            `).join('');
+                    <div class="stat-grid">
+                        <div class="stat-box">
+                            <div class="stat-label">Pending</div>
+                            <div class="stat-value">${tasks.filter(t => t.completed && !t.approved).length}</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Approved</div>
+                            <div class="stat-value">${tasks.filter(t => t.approved && !t.paid).length}</div>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Daily Athletic (${athleticCount}/10 for $10 bonus)</span>
+                            <span>${athleticCount}/10</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${progressPercent}%;"></div>
+                        </div>
+                    </div>
+                </div>`;
+            });
+
+            content.innerHTML = html;
+        }
+
+        function renderKids() {
+            const content = document.getElementById('kids-content');
+            let html = '';
+
+            kids.forEach(kid => {
+                const kidData = data.kids[kid];
+                const tasks = data.tasks[kid];
+                const completed = tasks.filter(t => t.completed).length;
+                const approved = tasks.filter(t => t.approved).length;
+                
+                html += `<div class="card kid-card ${kid}" onclick="toggleKidMode('${kid}')">
+                    <div class="kid-header">
+                        <div>
+                            <div class="kid-name">${kidEmojis[kid]} ${kidData.name}</div>
+                            <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.5rem;">Goal: $${kidData.goal}</div>
+                        </div>
+                        <div class="kid-payout">$${kidData.earned}</div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>All-Time Progress</span>
+                            <span>$${kidData.earned} / $${kidData.goal}</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${Math.min((kidData.earned / kidData.goal) * 100, 100)}%;"></div>
+                        </div>
+                    </div>
+                    <div class="stat-grid">
+                        <div class="stat-box">
+                            <div class="stat-label">Completed</div>
+                            <div class="stat-value">${completed}</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Approved</div>
+                            <div class="stat-value">${approved}</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Pending</div>
+                            <div class="stat-value">${tasks.filter(t => t.completed && !t.approved).length}</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Streak</div>
+                            <div class="stat-value">🔥 ${kidData.streak}</div>
+                        </div>
+                    </div>
+                </div>`;
+            });
+
+            content.innerHTML = html;
+        }
+
+        function renderTasks() {
+            const content = document.getElementById('tasks-content');
+            const tasks = data.tasks[currentKid];
+            let html = `<h3 style="margin-top: 0;">Your Tasks</h3>`;
+
+            if (tasks.length === 0) {
+                html += '<div class="empty-state"><div class="empty-emoji">📋</div><p>No tasks yet. Pick from Ideas!</p></div>';
+            } else {
+                const byCategory = {};
+                tasks.forEach(t => {
+                    if (!byCategory[t.category]) byCategory[t.category] = [];
+                    byCategory[t.category].push(t);
+                });
+
+                Object.keys(byCategory).forEach(cat => {
+                    html += `<h3>${cat}</h3>`;
+                    byCategory[cat].forEach(task => {
+                        const status = task.paid ? 'Paid ✓' : task.approved ? 'Approved ✓' : task.completed ? 'Pending' : 'Ready';
+                        html += `<div class="task-item ${task.completed ? 'completed' : ''} ${task.approved ? 'approved' : ''}">
+                            <div class="task-header">
+                                <div class="task-name">${task.name}</div>
+                                <div class="task-pay">$${task.pay}</div>
+                            </div>
+                            <div class="task-requirement">${task.requirement}</div>
+                            ${task.checklist ? `<button class="btn-secondary" onclick="editTask('${currentKid}', ${task.id})">Check Progress</button>` : ''}
+                            <button ${task.completed || task.paid ? 'disabled' : ''} onclick="toggleTask('${currentKid}', ${task.id}, true)" style="margin-top: 0.5rem;">
+                                ${task.completed ? '✓ Submitted' : 'Mark Done'}
+                            </button>
+                            <span class="task-status">${status}</span>
+                        </div>`;
+                    });
+                });
+            }
+
+            content.innerHTML = html;
         }
 
         function renderIdeas() {
-            const quickIdeas = [
-                { emoji: '🗑️', text: 'Take out trash', pay: '$2' },
-                { emoji: '⚽', text: 'Juggle (10 min)', pay: '$2' },
-                { emoji: '💪', text: 'Pushups (3×10)', pay: '$2' },
-                { emoji: '🧹', text: 'Sweep kitchen', pay: '$2' },
+            const content = document.getElementById('ideas-content');
+            let html = '<button class="btn-block" onclick="randomTask(currentKid)" style="background: #ec4899; margin-bottom: 1.5rem;">🎲 Surprise Me!</button>';
+
+            const categories = [
+                { name: 'Quick Money', tasks: [...taskTemplates.houseSm.slice(0, 5)] },
+                { name: 'Bigger Money', tasks: [...taskTemplates.houseMd.slice(0, 3)] },
+                { name: 'Athletic - Daily', tasks: [...taskTemplates.athleticSm.slice(0, 5)] },
+                { name: 'Athletic - Longer', tasks: [...taskTemplates.athleticMd.slice(0, 4)] }
             ];
-            const bigIdeas = [
-                { emoji: '🚗', text: 'Wash car', pay: '$10' },
-                { emoji: '⚽', text: 'Full workout (45 min)', pay: '$10' },
-                { emoji: '🏃', text: '1-mile run', pay: '$5' },
-            ];
-            
-            document.getElementById('ideas-quick').innerHTML = quickIdeas.map(i => 
-                `<div class="card" style="text-align: center; border: none;"><div style="font-size: 2rem;">${i.emoji}</div><div style="font-weight: bold;">${i.text}</div><div style="color: #10b981; font-weight: bold;">${i.pay}</div></div>`
-            ).join('');
-            
-            document.getElementById('ideas-bigger').innerHTML = bigIdeas.map(i => 
-                `<div class="card" style="text-align: center; border: none;"><div style="font-size: 2rem;">${i.emoji}</div><div style="font-weight: bold;">${i.text}</div><div style="color: #10b981; font-weight: bold;">${i.pay}</div></div>`
-            ).join('');
+
+            categories.forEach(cat => {
+                html += `<h3>${cat.name}</h3>`;
+                html += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">';
+                cat.tasks.forEach(task => {
+                    html += `<div class="card" style="padding: 0.75rem; cursor: pointer;" onclick="addTask('${currentKid}', '${task.name.replace(/'/g, '\\\'')}', '${task.category.replace(/'/g, '\\\'')}', ${task.pay}, '${task.requirement.replace(/'/g, '\\\'')}')">
+                        <div style="font-weight: 700; font-size: 0.9rem;">${task.name}</div>
+                        <div style="font-size: 0.75rem; color: #6b7280; margin: 0.25rem 0;">⏱ ${task.time} • ${task.difficulty}</div>
+                        <div style="font-weight: 900; color: #10b981; font-size: 1.1rem;">$${task.pay}</div>
+                    </div>`;
+                });
+                html += '</div>';
+            });
+
+            content.innerHTML = html;
         }
 
-        function renderPaymentHistory() {
-            const container = document.getElementById('payment-history');
-            if (earnings.history.length === 0) {
-                container.innerHTML = '<div class="empty-state"><div class="empty-emoji">📋</div><div class="empty-text">No payments yet</div></div>';
-            } else {
-                container.innerHTML = earnings.history.reverse().map(p => 
-                    `<div class="card"><div style="display: flex; justify-content: space-between; align-items: center;"><span>Paid on ${p.date}</span><span style="font-weight: bold; color: #10b981;">$${p.amount}</span></div></div>`
-                ).join('');
-            }
+        function renderRecords() {
+            const content = document.getElementById('records-content');
+            let html = '<h3 style="margin-top: 0;">This Week Rankings</h3>';
+
+            // Most tasks completed
+            const byCompleted = kids.map(k => ({
+                name: data.kids[k].name,
+                kid: k,
+                count: data.tasks[k].filter(t => t.approved).length
+            })).sort((a, b) => b.count - a.count);
+
+            html += '<h3>Most Tasks Approved</h3>';
+            byCompleted.forEach((item, i) => {
+                html += `<div class="leaderboard-item">
+                    <div class="leaderboard-rank">${i + 1}</div>
+                    <div class="leaderboard-name">${item.name}</div>
+                    <div class="leaderboard-value">${item.count} ✓</div>
+                </div>`;
+            });
+
+            // Most money earned
+            const byMoney = kids.map(k => ({
+                name: data.kids[k].name,
+                kid: k,
+                earned: data.tasks[k].filter(t => t.approved).reduce((sum, t) => sum + t.pay, 0)
+            })).sort((a, b) => b.earned - a.earned);
+
+            html += '<h3 style="margin-top: 1.5rem;">Most Money Earned</h3>';
+            byMoney.forEach((item, i) => {
+                html += `<div class="leaderboard-item">
+                    <div class="leaderboard-rank">${i + 1}</div>
+                    <div class="leaderboard-name">${item.name}</div>
+                    <div class="leaderboard-value">$${item.earned}</div>
+                </div>`;
+            });
+
+            content.innerHTML = html;
         }
 
-        function renderPendingTasks() {
-            const allTasks = [...tasks.house, ...tasks.soccer];
-            const pending = allTasks.filter(t => t.completed && !t.approved);
-            const container = document.getElementById('pending-tasks');
-            
-            if (pending.length === 0) {
-                container.innerHTML = '<div class="empty-state"><div class="empty-emoji">✓</div><div class="empty-text">All caught up!</div></div>';
-            } else {
-                container.innerHTML = pending.map(t => `
-                    <div class="card">
-                        <div class="task-name">${t.name}</div>
-                        <div class="task-requirement">${t.requirement}</div>
-                        <span class="task-pay">$${t.pay}</span>
-                        <div style="margin-top: 0.75rem; display: flex; gap: 0.5rem;">
-                            <button onclick="approveTask(${t.id}, '${tasks.house.includes(t) ? 'house' : 'soccer'}')">✓ Approve</button>
-                            <button class="btn-danger" onclick="rejectTask(${t.id}, '${tasks.house.includes(t) ? 'house' : 'soccer'}')">✗ Reject</button>
+        function renderReview() {
+            const content = document.getElementById('review-content');
+            let html = '';
+
+            kids.forEach(kid => {
+                const tasks = data.tasks[kid].filter(t => t.completed && !t.approved);
+                if (tasks.length === 0) return;
+
+                html += `<h3>${data.kids[kid].name}</h3>`;
+                tasks.forEach(task => {
+                    html += `<div class="card">
+                        <div class="task-header">
+                            <div class="task-name">${task.name}</div>
+                            <div class="task-pay">$${task.pay}</div>
                         </div>
-                    </div>
-                `).join('');
+                        <div class="task-requirement">${task.requirement}</div>
+                        ${task.checklist ? `<div class="checklist">
+                            ${task.checklist.map((item, i) => `<div class="checklist-item"><span style="color: ${task.checklistProgress && task.checklistProgress[i] ? '#10b981' : '#d1d5db'};">✓</span> ${item}</div>`).join('')}
+                        </div>` : ''}
+                        <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                            <button class="btn-block" onclick="approveTask('${kid}', ${task.id})">✓ Approve</button>
+                            <button class="btn-danger btn-block" onclick="rejectTask('${kid}', ${task.id})">✗ Reject</button>
+                        </div>
+                    </div>`;
+                });
+            });
+
+            if (html === '') {
+                html = '<div class="empty-state"><div class="empty-emoji">✓</div><p>All caught up! No pending tasks.</p></div>';
             }
+
+            content.innerHTML = html;
+        }
+
+        function renderPayout() {
+            const content = document.getElementById('payout-content');
+            const sundayDate = getNextSunday();
+            let html = `<div class="countdown">📅 Payout Date: ${sundayDate}</div>`;
+
+            html += `<div class="card gradient-emerald" style="margin-bottom: 1.5rem;">
+                <div style="font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem;">Total This Week</div>
+                <div style="font-size: 2.5rem; font-weight: 900;">$${getTotalApprovedUnpaid()}</div>
+                <button class="btn-block" style="margin-top: 1rem;" onclick="payoutAll()">💰 Pay All Kids</button>
+            </div>`;
+
+            kids.forEach(kid => {
+                const approved = data.tasks[kid].filter(t => t.approved && !t.paid).reduce((sum, t) => sum + t.pay, 0);
+                if (approved === 0) return;
+
+                html += `<div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                        <div style="font-weight: 700; font-size: 1.125rem;">${data.kids[kid].name}</div>
+                        <div style="font-size: 1.5rem; font-weight: 900;">$${approved}</div>
+                    </div>
+                    <button class="btn-block" onclick="payoutKid('${kid}')">Pay ${data.kids[kid].name}</button>
+                </div>`;
+            });
+
+            content.innerHTML = html;
+        }
+
+        // ===== TASK FUNCTIONS =====
+        function addTask(kid, name, category, pay, requirement) {
+            const newTask = {
+                id: Date.now(),
+                name,
+                category,
+                pay,
+                requirement,
+                completed: false,
+                approved: false,
+                paid: false,
+                dateAdded: new Date().toLocaleDateString()
+            };
+            data.tasks[kid].push(newTask);
+            saveData();
+            render();
+        }
+
+        function toggleTask(kid, taskId, submit = false) {
+            const task = data.tasks[kid].find(t => t.id === taskId);
+            if (task && submit) {
+                task.completed = true;
+                data.kids[kid].pending += task.pay;
+                saveData();
+                render();
+            }
+        }
+
+        function approveTask(kid, taskId) {
+            const task = data.tasks[kid].find(t => t.id === taskId);
+            if (task) {
+                task.approved = true;
+                data.kids[kid].pending -= task.pay;
+                data.kids[kid].approved += task.pay;
+                saveData();
+                render();
+            }
+        }
+
+        function rejectTask(kid, taskId) {
+            const task = data.tasks[kid].find(t => t.id === taskId);
+            if (task) {
+                task.completed = false;
+                data.kids[kid].pending -= task.pay;
+                saveData();
+                render();
+            }
+        }
+
+        function payoutKid(kid) {
+            const approved = data.tasks[kid].filter(t => t.approved && !t.paid).reduce((sum, t) => sum + t.pay, 0);
+            if (approved > 0) {
+                data.tasks[kid].forEach(t => {
+                    if (t.approved && !t.paid) {
+                        t.paid = true;
+                    }
+                });
+                data.kids[kid].earned += approved;
+                data.kids[kid].approved -= approved;
+                data.kids[kid].paidHistory.push({ amount: approved, date: new Date().toLocaleDateString() });
+                saveData();
+                render();
+            }
+        }
+
+        function payoutAll() {
+            kids.forEach(kid => payoutKid(kid));
+        }
+
+        function randomTask(kid) {
+            const allTasks = [...taskTemplates.houseSm, ...taskTemplates.athleticSm];
+            const random = allTasks[Math.floor(Math.random() * allTasks.length)];
+            addTask(kid, random.name, random.category, random.pay, random.requirement);
+        }
+
+        // ===== UTILITY =====
+        function getNextSunday() {
+            const today = new Date();
+            const nextSunday = new Date(today);
+            nextSunday.setDate(today.getDate() + (7 - today.getDay()) % 7 || 7);
+            return nextSunday.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        function getDaysUntilSunday() {
+            const today = new Date();
+            const daysUntil = (7 - today.getDay()) % 7 || 7;
+            return daysUntil;
+        }
+
+        function getTotalWeeklyEstimated() {
+            return kids.reduce((sum, kid) => sum + data.kids[kid].pending, 0);
+        }
+
+        function getTotalApprovedUnpaid() {
+            return kids.reduce((sum, kid) => sum + data.kids[kid].approved, 0);
         }
 
         function saveData() {
-            localStorage.setItem('tasks', JSON.stringify(tasks));
-            localStorage.setItem('earnings', JSON.stringify(earnings));
-            localStorage.setItem('weeklyBonus', JSON.stringify(weeklyBonus));
+            localStorage.setItem('summerMoneyData', JSON.stringify(data));
         }
 
         // Initialize
