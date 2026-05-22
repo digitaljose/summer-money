@@ -753,6 +753,11 @@
                 <button class="header-btn kennedy" onclick="toggleKidMode('kennedy')">Kennedy</button>
                 <button class="header-btn grayson" onclick="toggleKidMode('grayson')">Grayson</button>
                 <button class="header-btn" onclick="enterParentMode()" title="Parent Access">👤</button>
+                <div id="parentNavButtons" style="display: none; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="header-btn" onclick="switchTab('review')" style="background: #10b981; color: white; font-weight: 900;">Review</button>
+                    <button class="header-btn" onclick="switchTab('payout')" style="background: #10b981; color: white; font-weight: 900;">Payout</button>
+                    <button class="header-btn btn-secondary" onclick="exitParentMode()" style="background: #ef4444; color: white; font-weight: 900;">Exit</button>
+                </div>
             </div>
         </div>
     </div>
@@ -761,7 +766,7 @@
     <div id="pinModal" class="pin-modal" style="display: none;">
         <div class="pin-modal-content">
             <h2>Parent Access</h2>
-            <p style="text-align: center; color: #6b7280; margin-bottom: 1.5rem; font-weight: 600;">Enter PIN (1234)</p>
+            <p style="text-align: center; color: #6b7280; margin-bottom: 1.5rem; font-weight: 600;">Enter PIN</p>
             <div class="pin-display" id="pinDisplay"></div>
             <div class="pin-pad">
                 <button class="pin-button" onclick="addPin('1')">1</button>
@@ -808,13 +813,13 @@
         </div>
 
         <!-- Parent Review -->
-        <div id="tab-review" class="tab-content" style="display: none;">
+        <div id="tab-review" class="tab-content">
             <h2>Review</h2>
             <div id="review-content"></div>
         </div>
 
         <!-- Payout -->
-        <div id="tab-payout" class="tab-content" style="display: none;">
+        <div id="tab-payout" class="tab-content">
             <h2>Payout</h2>
             <div id="payout-content"></div>
         </div>
@@ -851,7 +856,10 @@
         let parentPin = '1234';
         let enteredPin = '';
 
-        let data = JSON.parse(localStorage.getItem('summerMoneyData')) || initializeData();
+        let data = initializeData();
+        
+        // Start fresh - clear any corrupted localStorage data
+        localStorage.clear();
 
         function initializeData() {
             return {
@@ -1046,6 +1054,12 @@
             render();
         }
 
+        function exitParentMode() {
+            parentMode = false;
+            document.getElementById('parentNavButtons').style.display = 'none';
+            toggleKidMode('olli');
+        }
+
         function enterParentMode() {
             document.getElementById('pinModal').style.display = 'flex';
         }
@@ -1068,6 +1082,8 @@
                 document.getElementById('pinModal').style.display = 'none';
                 enteredPin = '';
                 document.getElementById('pinDisplay').textContent = '';
+                // Show parent nav buttons
+                document.getElementById('parentNavButtons').style.display = 'flex';
                 switchTab('review');
                 render();
             } else {
@@ -1187,22 +1203,128 @@
                 }
             }
 
-            // Add more tasks section
-            html += '<div class="add-section"><h4>➕ Add More Tasks</h4>';
-            Object.keys(allTasks).forEach(category => {
-                html += `<h3 style="margin-top: 1.25rem; margin-bottom: 0.75rem; background: white; border: none; padding: 0; border-left: none; color: #1f2937;">${category}</h3>`;
-                html += '<div class="task-grid">';
-                allTasks[category].forEach(task => {
-                    html += `<div class="task-card" onclick="addTask('${currentKid}', '${task.name.replace(/'/g, '\\\'')}', '${task.pay}', '${task.req.replace(/'/g, '\\\'')}', ${task.athletic}, ${task.checklist ? JSON.stringify(task.checklist).replace(/'/g, '\\\'') : 'null'})">
-                        <div class="task-card-name">${task.name}</div>
-                        <div class="task-card-pay">$${task.pay}</div>
-                    </div>`;
+            // Pre-made tasks section with collapsible categories
+            html += '<div style="margin-top: 2rem;"><h3 style="margin-top: 0;">Browse Available Tasks</h3>';
+            Object.keys(allTasks).forEach((category, catIdx) => {
+                const categoryId = `cat_${catIdx}`;
+                html += `<div style="margin-top: 1rem;">
+                    <button onclick="toggleCategory('${categoryId}')" style="width: 100%; background: white; color: #065f46; border: 2px solid #10b981; text-align: left; padding: 1rem; font-weight: 800; margin-bottom: 0; cursor: pointer;">
+                        <span id="arrow_${categoryId}" style="display: inline-block; margin-right: 0.5rem;">▶</span> ${category}
+                    </button>
+                    <div id="${categoryId}" class="task-grid" style="display: none; padding: 0.75rem; margin-top: 0.75rem;">`;
+                
+                allTasks[category].forEach((task, idx) => {
+                    html += `<button class="add-task-btn" data-category="${category}" data-index="${idx}" style="width: 100%; background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%); color: #1f2937; border: 2px solid #e5e7eb; padding: 1rem; text-align: center; cursor: pointer; transition: all 0.3s ease; border-radius: 0.75rem;">
+                        <div style="font-weight: 800; font-size: 0.95rem; margin-bottom: 0.5rem;">${task.name}</div>
+                        <div style="font-weight: 900; color: #10b981; font-size: 1.25rem;">$${task.pay}</div>
+                    </button>`;
                 });
-                html += '</div>';
+                
+                html += '</div></div>';
             });
             html += '</div>';
 
+            // Custom task form section
+            html += `<div class="add-section" style="margin-top: 2rem;">
+                <h4 onclick="toggleAddTaskForm()" style="cursor: pointer; user-select: none;">➕ Add Custom Task</h4>
+                <div id="addTaskForm" style="display: none; margin-top: 1.5rem; padding: 1.5rem; background: white; border-radius: 1rem; border: 2px solid #10b981;">
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; font-weight: 700; margin-bottom: 0.5rem; color: #1f2937;">Task Name</label>
+                        <input type="text" id="taskName" placeholder="e.g., Wash the car" style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 1rem;">
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; font-weight: 700; margin-bottom: 0.5rem; color: #1f2937;">Category</label>
+                        <select id="taskCategory" style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 1rem;">
+                            <option value="">Select a category...</option>
+                            ${Object.keys(allTasks).map(cat => `<option value="${cat}">${cat}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; font-weight: 700; margin-bottom: 0.5rem; color: #1f2937;">Dollar Amount</label>
+                        <input type="number" id="taskPay" placeholder="e.g., 5" min="0" step="0.50" style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 1rem;">
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; font-weight: 700; margin-bottom: 0.5rem; color: #1f2937;">Task Description (optional)</label>
+                        <input type="text" id="taskDesc" placeholder="e.g., Inside and outside, dried and polished" style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 1rem;">
+                    </div>
+                    <button onclick="createCustomTask('${currentKid}')" style="width: 100%; background: linear-gradient(135deg, #10b981 0%, #059669 100%); margin-bottom: 0.75rem;">+ Add Task</button>
+                    <button onclick="toggleAddTaskForm()" style="width: 100%; background: #6b7280;">Cancel</button>
+                </div>
+            </div>`;
+
             content.innerHTML = html;
+            
+            // Attach event listeners to all pre-made task buttons
+            document.querySelectorAll('.add-task-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const category = this.getAttribute('data-category');
+                    const index = parseInt(this.getAttribute('data-index'));
+                    addTaskFromTemplate(currentKid, category, index);
+                });
+            });
+        }
+        
+        function toggleAddTaskForm() {
+            const form = document.getElementById('addTaskForm');
+            if (form.style.display === 'none') {
+                form.style.display = 'block';
+            } else {
+                form.style.display = 'none';
+                document.getElementById('taskName').value = '';
+                document.getElementById('taskCategory').value = '';
+                document.getElementById('taskPay').value = '';
+                document.getElementById('taskDesc').value = '';
+            }
+        }
+        
+        function createCustomTask(kid) {
+            const name = document.getElementById('taskName').value.trim();
+            const category = document.getElementById('taskCategory').value.trim();
+            const pay = parseInt(document.getElementById('taskPay').value) || 0;
+            const desc = document.getElementById('taskDesc').value.trim();
+            
+            if (!name || !category || pay <= 0) {
+                alert('Please fill in: Task Name, Category, and Dollar Amount');
+                return;
+            }
+            
+            const newTask = {
+                id: Date.now(),
+                name: name,
+                pay: pay,
+                requirement: desc || 'Complete as described',
+                athletic: false,
+                completed: false,
+                approved: false,
+                paid: false,
+                checklist: null,
+                checklistProgress: null
+            };
+            
+            data.tasks[kid].push(newTask);
+            saveData();
+            celebrate();
+            
+            // Clear form and close
+            document.getElementById('taskName').value = '';
+            document.getElementById('taskCategory').value = '';
+            document.getElementById('taskPay').value = '';
+            document.getElementById('taskDesc').value = '';
+            toggleAddTaskForm();
+            
+            render();
+        }
+        
+        function toggleCategory(categoryId) {
+            const categoryDiv = document.getElementById(categoryId);
+            const arrow = document.getElementById('arrow_' + categoryId);
+            if (categoryDiv.style.display === 'none') {
+                categoryDiv.style.display = 'grid';
+                arrow.textContent = '▼';
+            } else {
+                categoryDiv.style.display = 'none';
+                arrow.textContent = '▶';
+            }
         }
 
         function renderTaskCard(task, kid) {
@@ -1319,6 +1441,28 @@
         }
 
         // ===== TASK FUNCTIONS =====
+        function addTaskFromTemplate(kid, category, taskIndex) {
+            const task = allTasks[category][taskIndex];
+            if (!task) return;
+            
+            const newTask = {
+                id: Date.now(),
+                name: task.name,
+                pay: task.pay,
+                requirement: task.req,
+                athletic: task.athletic,
+                completed: false,
+                approved: false,
+                paid: false,
+                checklist: task.checklist || null,
+                checklistProgress: null
+            };
+            data.tasks[kid].push(newTask);
+            saveData();
+            celebrate();
+            render();
+        }
+
         function addTask(kid, name, pay, requirement, athletic, checklist) {
             const newTask = {
                 id: Date.now(),
@@ -1341,7 +1485,7 @@
             const task = data.tasks[kid].find(t => t.id === taskId);
             if (task && !task.completed) {
                 task.completed = true;
-                data.kids[kid].pending += task.pay;
+                data.kids[kid].pending = (parseInt(data.kids[kid].pending) || 0) + task.pay;
                 if (task.athletic) data.kids[kid].athleticWeek++;
                 celebrate();
                 saveData();
@@ -1358,7 +1502,7 @@
                 const allDone = task.checklistProgress.every(x => x);
                 if (allDone && !task.completed) {
                     task.completed = true;
-                    data.kids[kid].pending += task.pay;
+                    data.kids[kid].pending = (parseInt(data.kids[kid].pending) || 0) + task.pay;
                     celebrate();
                 }
                 saveData();
@@ -1370,10 +1514,10 @@
             const task = data.tasks[kid].find(t => t.id === taskId);
             if (task) {
                 task.approved = true;
-                data.kids[kid].pending -= task.pay;
-                data.kids[kid].approved += task.pay;
+                data.kids[kid].pending = (parseInt(data.kids[kid].pending) || 0) - task.pay;
+                data.kids[kid].approved = (parseInt(data.kids[kid].approved) || 0) + task.pay;
                 if (task.athletic && data.kids[kid].athleticWeek >= 10) {
-                    data.kids[kid].pending += 5;
+                    data.kids[kid].pending = (parseInt(data.kids[kid].pending) || 0) + 5;
                     data.kids[kid].athleticWeek = 0;
                     if (!data.kids[kid].badges.includes('Weekly Athlete')) data.kids[kid].badges.push('Weekly Athlete');
                 }
@@ -1386,7 +1530,7 @@
             const task = data.tasks[kid].find(t => t.id === taskId);
             if (task) {
                 task.completed = false;
-                data.kids[kid].pending -= task.pay;
+                data.kids[kid].pending = (parseInt(data.kids[kid].pending) || 0) - task.pay;
                 if (task.athletic) data.kids[kid].athleticWeek--;
                 saveData();
                 render();
@@ -1397,8 +1541,8 @@
             const approved = data.tasks[kid].filter(t => t.approved && !t.paid).reduce((s, t) => s + t.pay, 0);
             if (approved > 0) {
                 data.tasks[kid].forEach(t => { if (t.approved && !t.paid) t.paid = true; });
-                data.kids[kid].earned += approved;
-                data.kids[kid].approved -= approved;
+                data.kids[kid].earned = (parseInt(data.kids[kid].earned) || 0) + approved;
+                data.kids[kid].approved = (parseInt(data.kids[kid].approved) || 0) - approved;
                 data.kids[kid].paidHistory.push({ amount: approved, date: new Date().toLocaleDateString() });
                 if (!data.kids[kid].badges.includes('Payout Ready')) data.kids[kid].badges.push('Payout Ready');
                 saveData();
@@ -1418,15 +1562,34 @@
         }
 
         function getTotalWeekly() {
-            return kids.reduce((sum, kid) => sum + data.kids[kid].pending, 0);
+            let total = 0;
+            kids.forEach(kid => {
+                total += parseInt(data.kids[kid].pending) || 0;
+            });
+            return total;
         }
 
         function getTotalApprovedUnpaid() {
-            return kids.reduce((sum, kid) => sum + data.kids[kid].approved, 0);
+            let total = 0;
+            kids.forEach(kid => {
+                total += parseInt(data.kids[kid].approved) || 0;
+            });
+            return total;
         }
 
         function saveData() {
+            data = sanitizeData(data);
             localStorage.setItem('summerMoneyData', JSON.stringify(data));
+        }
+
+        function sanitizeData(d) {
+            // Ensure all numeric fields are actually numbers
+            kids.forEach(kid => {
+                if (typeof d.kids[kid].earned === 'string') d.kids[kid].earned = parseInt(d.kids[kid].earned) || 0;
+                if (typeof d.kids[kid].pending === 'string') d.kids[kid].pending = parseInt(d.kids[kid].pending) || 0;
+                if (typeof d.kids[kid].approved === 'string') d.kids[kid].approved = parseInt(d.kids[kid].approved) || 0;
+            });
+            return d;
         }
 
         // Initialize
