@@ -756,7 +756,8 @@
                 <div id="parentNavButtons" style="display: none; gap: 0.5rem; flex-wrap: wrap;">
                     <button class="header-btn" onclick="switchTab('review')" style="background: #10b981; color: white; font-weight: 900;">Review</button>
                     <button class="header-btn" onclick="switchTab('payout')" style="background: #10b981; color: white; font-weight: 900;">Payout</button>
-                    <button class="header-btn btn-secondary" onclick="exitParentMode()" style="background: #ef4444; color: white; font-weight: 900;">Exit</button>
+                    <button class="header-btn" onclick="factoryReset()" style="background: #ef4444; color: white; font-weight: 900;">Reset</button>
+                    <button class="header-btn btn-secondary" onclick="exitParentMode()" style="background: #6b7280; color: white; font-weight: 900;">Exit</button>
                 </div>
             </div>
         </div>
@@ -1058,6 +1059,18 @@
             parentMode = false;
             document.getElementById('parentNavButtons').style.display = 'none';
             toggleKidMode('olli');
+        }
+
+        function factoryReset() {
+            if (confirm('⚠️ WARNING: This will erase ALL tasks, earnings, and data for all kids. Are you sure?')) {
+                if (confirm('This action CANNOT be undone. Click OK again to confirm.')) {
+                    localStorage.clear();
+                    data = initializeData();
+                    saveData();
+                    exitParentMode();
+                    alert('✅ All data has been reset. The app is ready for summer!');
+                }
+            }
         }
 
         function enterParentMode() {
